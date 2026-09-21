@@ -211,6 +211,23 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 .cdn{font-size:120px;font-weight:900;color:#fd0;text-shadow:0 0 36px #fd0,0 0 70px #f80;animation:cpa .5s ease}
 @keyframes cpa{0%{transform:scale(2.6);opacity:0}60%{transform:scale(.88)}100%{transform:scale(1);opacity:1}}
 .rov{display:none;position:fixed;inset:0;z-index:220;background:rgba(0,0,0,.94);flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:18px}
+.dpw-ov{display:none;position:fixed;inset:0;z-index:240;background:rgba(0,0,0,.88);align-items:center;justify-content:center;padding:18px}
+.dpw-ov.on{display:flex}
+.dpw-box{width:340px;max-width:94vw;background:#0d0d18;border:2px solid #fd0;border-radius:14px;padding:22px 20px;box-shadow:0 0 30px rgba(255,221,0,.35),inset 0 0 24px rgba(255,221,0,.05);text-align:center}
+.dpw-tit{font-size:16px;font-weight:900;color:#fd0;margin-bottom:4px;letter-spacing:.5px}
+.dpw-sub{font-size:11px;color:#8a8a9c;margin-bottom:12px}
+.dpw-row{display:flex;gap:6px}
+.dpw-row input{flex:1;min-width:0;padding:11px 14px;font-size:14px;background:rgba(255,255,255,.04);border:2px solid #2a2a3a;border-radius:9px;color:#fff;outline:none;transition:all .25s}
+.dpw-row input:focus{border-color:#fd0;box-shadow:0 0 14px rgba(255,221,0,.3)}
+.dpw-eye{flex:0 0 auto;padding:0 12px;font-size:12.5px;font-weight:800;white-space:nowrap;cursor:pointer;background:rgba(255,221,0,.06);border:2px solid #fd0;border-radius:9px;color:#fd0;transition:all .2s}
+.dpw-eye:hover{background:rgba(255,221,0,.18);box-shadow:0 0 12px rgba(255,221,0,.4)}
+.dpw-btns{display:flex;gap:8px;margin-top:14px}
+.dpw-btns button{flex:1;padding:11px;font-size:13.5px;font-weight:800;border-radius:9px;cursor:pointer;background:rgba(255,255,255,.02);border:2px solid;transition:all .2s}
+.dpw-ok{color:#fd0;border-color:#fd0}
+.dpw-ok:hover{box-shadow:0 0 18px rgba(255,221,0,.5)}
+.dpw-cancel{color:#8a8a9c;border-color:#2a2a3a}
+.dpw-cancel:hover{color:#fff;border-color:#888}
+.dpw-box.shk{animation:sshka .32s}
 .rov.on{display:flex}
 .rtit{font-size:36px;font-weight:900;animation:rga 1.1s infinite;letter-spacing:3px}
 @keyframes rga{0%,100%{text-shadow:0 0 14px currentColor}50%{text-shadow:0 0 38px currentColor,0 0 72px currentColor}}
@@ -236,6 +253,7 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 <div class="top-btns">
   <button class="top-btn" onclick="resetData()">🗑️ 초기화</button>
   <button class="top-btn dev" onclick="devCheat()">🔑 개발자</button>
+  <button class="top-btn dev" id="devExitBtn" style="display:none" onclick="devExit()">🚪 개발자 나가기</button>
 </div>
 <div class="bg-layer" id="ledBg"></div><div class="grid-ov"></div><div class="scan"></div>
 <div class="ne ne-t"></div><div class="ne ne-b"></div><div class="ne ne-l"></div><div class="ne ne-r"></div>
@@ -339,6 +357,20 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 </div>
 
 <div class="cdov" id="cdOv"><div class="cdn" id="cdN">3</div></div>
+<div class="dpw-ov" id="devPwOv">
+  <div class="dpw-box" id="devPwBox">
+    <div class="dpw-tit">🔑 개발자 비밀번호 입력</div>
+    <div class="dpw-sub">👁 버튼을 누르면 비밀번호를 보이게/안 보이게 할 수 있어요</div>
+    <div class="dpw-row">
+      <input type="password" id="devPwInput" placeholder="비밀번호" autocomplete="off">
+      <button type="button" class="dpw-eye" id="devPwEye" onclick="toggleDevPw()" title="보이기/숨기기">👁 보이기</button>
+    </div>
+    <div class="dpw-btns">
+      <button type="button" class="dpw-ok" onclick="submitDevPw()">✅ 확인</button>
+      <button type="button" class="dpw-cancel" onclick="closeDevPw()">❌ 취소</button>
+    </div>
+  </div>
+</div>
 <div class="rov" id="rOv"><div class="rtit" id="rTit">GAME OVER</div><div class="rwin" id="rWin"></div><div class="coin-earn" id="coinEarn"></div><div class="rsta" id="rSta"></div><button class="btn bg2" onclick="rematch()">⚔️ 재대결</button><button class="btn bc" onclick="exitGame()">🏠 메뉴</button></div>
 
 <script>
@@ -346,6 +378,7 @@ function $(id){return document.getElementById(id)}
 const SAVE='jolla_legend_v4';
 const DEV_PW='gjwowls'; // 🔑 설정하신 개발자 비밀번호
 let USER,UID=0;
+let DEV_BACKUP=null; // 🔑 개발자 모드 진입 전 상태 백업
 
 function defUser(){
   return {
@@ -386,10 +419,35 @@ function resetData(){
 }
 
 // 🔑 개발자 치트 모드 활성화 함수 (비밀번호: gjwowls)
+// 비밀번호 입력 창 열기
 function devCheat(){
-  const pw=prompt('🔑 개발자 비밀번호를 입력하세요:');
-  if(!pw)return;
+  const inp=$('devPwInput');
+  inp.value='';
+  inp.type='password';        // 기본: 안 보이게
+  $('devPwEye').textContent='👁 보이기';
+  $('devPwOv').classList.add('on');
+  setTimeout(()=>inp.focus(),50);
+}
+// 👁 보이기/안 보이게 토글
+function toggleDevPw(){
+  const inp=$('devPwInput');
+  const hidden=(inp.type==='password');
+  inp.type=hidden?'text':'password';
+  $('devPwEye').textContent=hidden?'🙈 숨기기':'👁 보이기';
+  inp.focus();
+}
+function closeDevPw(){
+  $('devPwOv').classList.remove('on');
+  $('devPwInput').value='';
+}
+// 확인 버튼 / Enter 키로 제출
+function submitDevPw(){
+  const pw=$('devPwInput').value;
+  if(!pw.trim()){sfx('typo');return}
   if(pw.trim()===DEV_PW){
+    closeDevPw();
+    // 원상복구를 위해 치트 적용 전 상태 백업 (이미 개발자 모드면 기존 백업 유지)
+    if(!DEV_BACKUP) DEV_BACKUP=JSON.parse(JSON.stringify(USER));
     ['body','aura','gun','hat'].forEach(k=>{
       SHOP[k].forEach(it=>{
         if(!USER.owned[k].includes(it.id)) USER.owned[k].push(it.id);
@@ -399,11 +457,40 @@ function devCheat(){
     saveUser();
     updCoin();
     if($('scrShop').classList.contains('on')) renderShop();
+    $('devExitBtn').style.display='inline-block';
     sfx('coin');
     alert('⚡ [개발자 모드 승인 완료!]\n모든 아이템 잠금 해제 & 코인 999,999개가 지급되었습니다!');
   } else {
     sfx('typo');
+    const box=$('devPwBox');
+    box.classList.remove('shk');void box.offsetWidth;box.classList.add('shk');
+    $('devPwInput').value='';
+    $('devPwInput').focus();
     alert('❌ 비밀번호가 올바르지 않습니다.');
+  }
+}
+// 비밀번호 입력창 키 이벤트 (Enter=확인, Esc=취소)
+document.addEventListener('keydown',e=>{
+  if(!$('devPwOv').classList.contains('on'))return;
+  if(e.key==='Enter'){e.preventDefault();submitDevPw()}
+  else if(e.key==='Escape'){closeDevPw()}
+});
+
+// 🚪 개발자 모드 나가기 — 치트 적용 전 상태로 원상복구
+function devExit(){
+  if(!DEV_BACKUP){
+    $('devExitBtn').style.display='none';
+    return;
+  }
+  if(confirm('🚪 개발자 모드를 종료하고 이전 상태로 원상복구하시겠습니까?')){
+    USER=JSON.parse(JSON.stringify(DEV_BACKUP));
+    DEV_BACKUP=null;
+    saveUser();
+    updCoin();
+    if($('scrShop').classList.contains('on')) renderShop();
+    $('devExitBtn').style.display='none';
+    sfx('typo');
+    alert('✅ 개발자 모드 종료!\n개발자 모드 진입 전 상태로 원상복구되었습니다.');
   }
 }
 
