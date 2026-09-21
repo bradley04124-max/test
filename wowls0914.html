@@ -236,6 +236,7 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 <div class="top-btns">
   <button class="top-btn" onclick="resetData()">🗑️ 초기화</button>
   <button class="top-btn dev" onclick="devCheat()">🔑 개발자</button>
+  <button class="top-btn dev" id="devExitBtn" style="display:none" onclick="devExit()">🚪 개발자 나가기</button>
 </div>
 <div class="bg-layer" id="ledBg"></div><div class="grid-ov"></div><div class="scan"></div>
 <div class="ne ne-t"></div><div class="ne ne-b"></div><div class="ne ne-l"></div><div class="ne ne-r"></div>
@@ -344,8 +345,9 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 <script>
 function $(id){return document.getElementById(id)}
 const SAVE='jolla_legend_v4';
-const DEV_PW='gjwowls'; // 🔑 설정하신 개발자 비밀번호
+const DEV_PW='bradleyhandsome'; // 🔑 설정하신 개발자 비밀번호
 let USER,UID=0;
+let DEV_BACKUP=null; // 🔑 개발자 모드 진입 전 상태 백업
 
 function defUser(){
   return {
@@ -385,11 +387,13 @@ function resetData(){
   }
 }
 
-// 🔑 개발자 치트 모드 활성화 함수 (비밀번호: gjwowls)
+// 🔑 개발자 치트 모드 활성화 함수 (비밀번호: bradleyhandsome)
 function devCheat(){
   const pw=prompt('🔑 개발자 비밀번호를 입력하세요:');
   if(!pw)return;
   if(pw.trim()===DEV_PW){
+    // 원상복구를 위해 치트 적용 전 상태 백업 (이미 개발자 모드면 기존 백업 유지)
+    if(!DEV_BACKUP) DEV_BACKUP=JSON.parse(JSON.stringify(USER));
     ['body','aura','gun','hat'].forEach(k=>{
       SHOP[k].forEach(it=>{
         if(!USER.owned[k].includes(it.id)) USER.owned[k].push(it.id);
@@ -399,11 +403,30 @@ function devCheat(){
     saveUser();
     updCoin();
     if($('scrShop').classList.contains('on')) renderShop();
+    $('devExitBtn').style.display='inline-block';
     sfx('coin');
     alert('⚡ [개발자 모드 승인 완료!]\n모든 아이템 잠금 해제 & 코인 999,999개가 지급되었습니다!');
   } else {
     sfx('typo');
     alert('❌ 비밀번호가 올바르지 않습니다.');
+  }
+}
+
+// 🚪 개발자 모드 나가기 — 치트 적용 전 상태로 원상복구
+function devExit(){
+  if(!DEV_BACKUP){
+    $('devExitBtn').style.display='none';
+    return;
+  }
+  if(confirm('🚪 개발자 모드를 종료하고 이전 상태로 원상복구하시겠습니까?')){
+    USER=JSON.parse(JSON.stringify(DEV_BACKUP));
+    DEV_BACKUP=null;
+    saveUser();
+    updCoin();
+    if($('scrShop').classList.contains('on')) renderShop();
+    $('devExitBtn').style.display='none';
+    sfx('typo');
+    alert('✅ 개발자 모드 종료!\n개발자 모드 진입 전 상태로 원상복구되었습니다.');
   }
 }
 
