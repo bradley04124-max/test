@@ -219,7 +219,7 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 .dpw-row{display:flex;gap:6px}
 .dpw-row input{flex:1;min-width:0;padding:11px 14px;font-size:14px;background:rgba(255,255,255,.04);border:2px solid #2a2a3a;border-radius:9px;color:#fff;outline:none;transition:all .25s}
 .dpw-row input:focus{border-color:#fd0;box-shadow:0 0 14px rgba(255,221,0,.3)}
-.dpw-eye{flex:0 0 auto;width:46px;font-size:16px;cursor:pointer;background:rgba(255,221,0,.06);border:2px solid #fd0;border-radius:9px;color:#fd0;transition:all .2s}
+.dpw-eye{flex:0 0 auto;padding:0 12px;font-size:12.5px;font-weight:800;white-space:nowrap;cursor:pointer;background:rgba(255,221,0,.06);border:2px solid #fd0;border-radius:9px;color:#fd0;transition:all .2s}
 .dpw-eye:hover{background:rgba(255,221,0,.18);box-shadow:0 0 12px rgba(255,221,0,.4)}
 .dpw-btns{display:flex;gap:8px;margin-top:14px}
 .dpw-btns button{flex:1;padding:11px;font-size:13.5px;font-weight:800;border-radius:9px;cursor:pointer;background:rgba(255,255,255,.02);border:2px solid;transition:all .2s}
@@ -363,7 +363,7 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
     <div class="dpw-sub">👁 버튼을 누르면 비밀번호를 보이게/안 보이게 할 수 있어요</div>
     <div class="dpw-row">
       <input type="password" id="devPwInput" placeholder="비밀번호" autocomplete="off">
-      <button type="button" class="dpw-eye" id="devPwEye" onclick="toggleDevPw()" title="보이기/숨기기">👁</button>
+      <button type="button" class="dpw-eye" id="devPwEye" onclick="toggleDevPw()" title="보이기/숨기기">👁 보이기</button>
     </div>
     <div class="dpw-btns">
       <button type="button" class="dpw-ok" onclick="submitDevPw()">✅ 확인</button>
@@ -376,7 +376,7 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 <script>
 function $(id){return document.getElementById(id)}
 const SAVE='jolla_legend_v4';
-const DEV_PW='bradleyhandsome'; // 🔑 설정하신 개발자 비밀번호
+const DEV_PW='gjwowls'; // 🔑 설정하신 개발자 비밀번호
 let USER,UID=0;
 let DEV_BACKUP=null; // 🔑 개발자 모드 진입 전 상태 백업
 
@@ -418,13 +418,13 @@ function resetData(){
   }
 }
 
-// 🔑 개발자 치트 모드 활성화 함수 (비밀번호: bradleyhandsome)
+// 🔑 개발자 치트 모드 활성화 함수 (비밀번호: gjwowls)
 // 비밀번호 입력 창 열기
 function devCheat(){
   const inp=$('devPwInput');
   inp.value='';
   inp.type='password';        // 기본: 안 보이게
-  $('devPwEye').textContent='👁';
+  $('devPwEye').textContent='👁 보이기';
   $('devPwOv').classList.add('on');
   setTimeout(()=>inp.focus(),50);
 }
@@ -433,7 +433,7 @@ function toggleDevPw(){
   const inp=$('devPwInput');
   const hidden=(inp.type==='password');
   inp.type=hidden?'text':'password';
-  $('devPwEye').textContent=hidden?'🙈':'👁';
+  $('devPwEye').textContent=hidden?'🙈 숨기기':'👁 보이기';
   inp.focus();
 }
 function closeDevPw(){
