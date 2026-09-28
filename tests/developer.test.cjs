@@ -23,6 +23,7 @@ function game() {
           add: name => classes.add(name),
           remove: name => classes.delete(name),
           contains: name => classes.has(name),
+          toggle: (name, force) => force ? classes.add(name) : classes.delete(name),
         },
         focus() {},
       });
@@ -43,6 +44,7 @@ function game() {
   vm.runInContext(
     segment('function $(id)', '// 🔑 개발자 비밀번호 입력 창 열기') +
     segment('function gunSVG', 'function goScr') +
+    segment('function updSh', "document.addEventListener('keydown',e=>{") +
     segment('function initG', 'function cdA'), context,
   );
   const run = code => vm.runInContext(code, context);
@@ -93,6 +95,37 @@ test('developer session unlocks every exclusive visual item, exiting blocks them
   assert.equal(context.getAuraId(), 'none');
   context.buyEq('aura', 'devnova');
   assert.equal(context.getAuraId(), 'none');
+});
+
+test('mobile shield button only protects the current defender', () => {
+  const {context, element, run} = game();
+  // Avoid animation DOM in this unit test; exercise the same guards as the touch buttons.
+  run('actSh=w=>{G[w].sh--;G[w].shOn=true}');
+  run('G.mode="ai";G.aimPhase=true;G.aimLo="p1";G.fired=false;G.p1.sh=2;G.p1.shOn=false;');
+  context.updSh('p1');
+  assert.equal(element('sb1').disabled, false);
+  context.useShield('p2');
+  assert.equal(run('G.p2.sh'), 3);
+  context.useShield('p1');
+  assert.equal(run('G.p1.sh'), 1);
+  context.useShield('p1');
+  assert.equal(run('G.p1.sh'), 1);
+  run('G.mode="pvp";G.aimLo="p2";G.p2.shOn=false;');
+  element('aimOv').classList.add('on');
+  context.updateAimShieldUI();
+  assert.equal(element('aimShieldBtn').style.display, 'block');
+  context.useAimShield();
+  assert.equal(run('G.p2.sh'), 2);
+  run('G.aimPhase=false');
+  context.useShield('p1');
+  assert.equal(run('G.p1.sh'), 1);
+});
+
+test('small-screen styling and touch aim controls are present', () => {
+  assert.match(html, /@media\(max-width:520px\)/);
+  assert.match(html, /width:min\(410px,100%\)/);
+  assert.match(html, /ar\.ontouchstart=ar\.ontouchmove=e=>\{e\.preventDefault\(\)/);
+  assert.match(html, /id="sb1" onclick="useShield\('p1'\)"/);
 });
 
 test('each developer skill works once per AI match and is unavailable otherwise', () => {

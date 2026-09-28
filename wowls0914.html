@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>⚡ 졸라맨 타자 배틀 LEGENDARY</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -176,7 +176,8 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 .gi:disabled{opacity:.3;cursor:not-allowed}
 .gi.ok{border-color:#0f8;box-shadow:0 0 16px rgba(0,255,136,.4)}
 .gi.er{border-color:#f44;box-shadow:0 0 16px rgba(255,68,68,.4)}
-.htxt{color:#444;font-size:10px;text-align:center;margin-top:2px}
+.htxt{color:#777;font-size:10px;text-align:center;margin-top:2px}
+.touch-hint{display:none}
 .aim-ov{display:none;position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.9);flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:18px}
 .aim-ov.on{display:flex}
 .aim-title{font-size:20px;font-weight:900;text-shadow:0 0 14px currentColor;letter-spacing:1px}
@@ -198,6 +199,7 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 .fire-btn{padding:12px 42px;font-size:18px;font-weight:900;border:3px solid #f22;border-radius:13px;background:rgba(255,0,0,.16);color:#f44;cursor:pointer;box-shadow:0 0 18px rgba(255,0,0,.35);letter-spacing:1px;transition:all .18s}
 .fire-btn:hover{background:rgba(255,0,0,.32);transform:scale(1.06);box-shadow:0 0 30px rgba(255,0,0,.6)}
 .fire-btn:disabled{opacity:.28;cursor:not-allowed;transform:none}
+.aim-shield{display:none;min-height:44px;padding:8px 20px;border:2px solid #4af;border-radius:10px;background:rgba(68,170,255,.18);color:#9df;font-weight:800;cursor:pointer}
 .key-badge{display:inline-block;padding:1px 6px;border:1px solid #666;border-radius:4px;background:rgba(255,255,255,.1);color:#fff;font-weight:800;font-size:11px}
 .dmf{position:absolute;font-size:28px;font-weight:900;color:#f22;text-shadow:0 0 12px #f00;z-index:60;pointer-events:none;animation:dfa 1s forwards}
 @keyframes dfa{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-46px) scale(1.3);opacity:0}}
@@ -210,8 +212,8 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 .cdov.on{display:flex}
 .cdn{font-size:120px;font-weight:900;color:#fd0;text-shadow:0 0 36px #fd0,0 0 70px #f80;animation:cpa .5s ease}
 @keyframes cpa{0%{transform:scale(2.6);opacity:0}60%{transform:scale(.88)}100%{transform:scale(1);opacity:1}}
-.rov{display:none;position:fixed;inset:0;z-index:220;background:rgba(0,0,0,.94);flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:18px}
-.dpw-ov{display:none;position:fixed;inset:0;z-index:240;background:rgba(0,0,0,.88);align-items:center;justify-content:center;padding:18px}
+.rov{display:none;position:fixed;inset:0;z-index:320;background:rgba(0,0,0,.94);flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:18px}
+.dpw-ov{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.88);align-items:center;justify-content:center;padding:18px}
 .dpw-ov.on{display:flex}
 .dpw-box{width:340px;max-width:94vw;background:#0d0d18;border:2px solid #fd0;border-radius:14px;padding:22px 20px;box-shadow:0 0 30px rgba(255,221,0,.35),inset 0 0 24px rgba(255,221,0,.05);text-align:center}
 .dpw-tit{font-size:16px;font-weight:900;color:#fd0;margin-bottom:4px;letter-spacing:.5px}
@@ -221,7 +223,7 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 .dpw-row input:focus{border-color:#fd0;box-shadow:0 0 14px rgba(255,221,0,.3)}
 .dpw-eye{width:100%;margin-top:8px;padding:9px;font-size:12.5px;font-weight:800;cursor:pointer;background:rgba(255,221,0,.06);border:2px solid #fd0;border-radius:9px;color:#fd0}
 .dpw-eye:hover{background:rgba(255,221,0,.18);box-shadow:0 0 12px rgba(255,221,0,.4)}
-.dpw-ov.reveal-ov{z-index:250}
+.dpw-ov.reveal-ov{z-index:410}
 .dpw-error{min-height:18px;margin-top:8px;font-size:12px;color:#f66}
 .dpw-btns{display:flex;gap:8px;margin-top:14px}
 .dpw-btns button{flex:1;padding:11px;font-size:13.5px;font-weight:800;border-radius:9px;cursor:pointer;background:rgba(255,255,255,.02);border:2px solid;transition:all .2s}
@@ -252,7 +254,54 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 @keyframes wd{0%,100%{opacity:.35}50%{opacity:1}}
 .spd-preview{color:#fd0;font-size:11px;text-align:center;margin-top:3px;min-height:15px}
 .wcount{color:#555;font-size:10px;text-align:center;margin-top:4px}
-@media(max-width:820px){.arena{flex-direction:column;align-items:center}.ppan{width:100%;max-width:340px}.wbox{font-size:18px}.title{font-size:24px}.aim-area{width:300px;height:170px}.shop-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:820px){
+  .scr{min-height:100dvh;justify-content:flex-start;padding:88px 16px 24px}
+  .title{font-size:28px}
+  .arena{flex:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:'player enemy' 'typing typing';align-content:start;gap:10px}
+  #pan1{grid-area:player}#pan2{grid-area:enemy}.ccol{grid-area:typing;width:100%}
+  .ppan{width:100%;min-width:0;gap:2px;padding:8px}
+  .jw,.jw svg{width:86px;height:96px}
+  .jw .aura{transform:scale(.72);transform-origin:center}
+  .wbox{font-size:clamp(17px,3.4vw,22px);min-height:48px;padding:10px 12px}
+  .shop-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tab-content{max-height:none;overflow:visible}
+  .aim-area{width:min(410px,100%);height:clamp(150px,28dvh,210px);touch-action:none}
+  .aim-tmbar{width:min(370px,100%)}
+  .aim-ov,.dpw-ov,.rov{overflow-y:auto;max-height:100dvh}
+}
+@media(max-width:520px){
+  .scr{padding:calc(94px + env(safe-area-inset-top)) 12px calc(22px + env(safe-area-inset-bottom))}
+  .title{font-size:clamp(21px,7vw,28px)}
+  .top-btns{top:calc(7px + env(safe-area-inset-top));left:8px;right:98px;flex-wrap:wrap;gap:4px}
+  .top-btn{min-height:34px;padding:5px 8px;font-size:10px}
+  .coin-bar{top:calc(7px + env(safe-area-inset-top));right:8px;padding:7px 9px;font-size:12px}
+  .btn,.fld,.dvd,.mlist{width:min(330px,100%)}
+  .btn{min-height:44px}
+  .fld input,.fld select,.gi,.dpw-row input{font-size:16px}
+  .ghud{gap:5px}.ghud .btn-s{min-width:44px;min-height:44px;padding:7px}
+  .rbdg{font-size:13px}
+  .arena{gap:8px}.ppan{padding:6px;overflow:hidden}.pn{font-size:12px}
+  .jw,.jw svg{width:70px;height:78px}.jw .aura{transform:scale(.56)}
+  .hrt .ht{font-size:12px}.stag2{font-size:9px}.hpl{display:none}
+  .shb{min-height:40px;min-width:80px;padding:5px;font-size:11px}
+  .ccol{gap:6px}.vsg{display:none}
+  .tab{font-size:11px;line-height:1.3;padding:10px 2px}
+  .tab-content{padding:8px}.shop-grid{gap:7px}.shop-item{padding:6px 3px}
+  .wbox{font-size:clamp(16px,5vw,20px);letter-spacing:.5px}
+  .htxt{font-size:11px}.dev-skill{min-height:44px;font-size:11px}
+  .aim-ov{justify-content:center;padding:calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom))}
+  .aim-title{font-size:18px}.aim-area{height:clamp(145px,26dvh,185px)}
+  .fire-btn{min-height:48px;padding:8px 32px}.aim-hint{color:#aaa}
+  .dpw-ov,.rov{padding:calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom))}
+  .dpw-box{width:min(340px,100%)}.dpw-btns button{min-height:44px}
+}
+@media(max-width:360px){.scr{padding-top:calc(108px + env(safe-area-inset-top))}.shop-item .rar{font-size:7px;padding:2px 3px}.dev-skills{gap:4px}.dev-skill{font-size:10px;padding:6px 3px}}
+@media(max-height:560px){.aim-ov,.dpw-ov,.rov{justify-content:flex-start}}
+@media(hover:none) and (pointer:coarse){
+  .touch-hint{display:inline}.desktop-hint{display:none}
+  .btn:hover,.shop-item:hover{transform:none}
+  .aim-area{touch-action:none}
+}
 </style>
 </head>
 <body>
@@ -330,7 +379,7 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 <div class="pn c1" id="nm1">P1</div>
 <div class="hpw"><div class="hpl">HP</div><div class="hpb"><div class="hpf hpf1" id="hf1" style="width:100%"></div><div class="hpt" id="ht1">3/3</div></div></div>
 <div class="hrt" id="hr1"></div>
-<div class="shui"><span class="shi" id="si1_0">🛡️</span><span class="shi" id="si1_1">🛡️</span><span class="shi" id="si1_2">🛡️</span><button class="shb" id="sb1" disabled>E키</button></div>
+<div class="shui"><span class="shi" id="si1_0">🛡️</span><span class="shi" id="si1_1">🛡️</span><span class="shi" id="si1_2">🛡️</span><button type="button" class="shb" id="sb1" onclick="useShield('p1')" disabled aria-label="플레이어 1 쉴드 사용">🛡️ 쉴드</button></div>
 <div class="jw" id="j1"></div>
 <div class="stag2" id="st1">대기</div>
 </div>
@@ -338,9 +387,9 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 <div class="vsg">VS</div>
 <div class="wbox" id="wbox"><span class="inf">준비!</span></div>
 <div class="tmw"><div class="tmb"><div class="tmf" id="tmf" style="width:100%"></div></div><div class="tmt" id="tmt">15.0초</div></div>
-<div style="width:100%"><input class="gi" id="iS" placeholder="여기에 타이핑!" autocomplete="off" disabled></div>
+<div style="width:100%"><input class="gi" id="iS" placeholder="여기에 타이핑!" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" disabled></div>
 <div class="ai-disp" id="aiDisp" style="display:none"><span style="color:#666;font-size:10px">🤖 AI: </span><span id="aiTS"></span><span class="ac"></span><span id="aiRS"></span></div>
-<div class="htxt">먼저 완성→조준→발사! <span class="key-badge">E</span>=쉴드</div>
+<div class="htxt">먼저 완성→조준→발사! <span class="desktop-hint"><span class="key-badge">E</span>=쉴드</span><span class="touch-hint">방어할 때 🛡️ 쉴드 버튼을 누르세요</span></div>
 <div class="dev-skills" id="devSkills">
   <button type="button" class="dev-skill" id="devSkillTime" onclick="useDevSkill('time')">⚡ 오버클럭 (F2) · 시간 +5초</button>
   <button type="button" class="dev-skill" id="devSkillHeal" onclick="useDevSkill('heal')">❤️ 응급 수리 (F3) · HP +1</button>
@@ -351,7 +400,7 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 <div class="pn c2" id="nm2">P2</div>
 <div class="hpw"><div class="hpl">HP</div><div class="hpb"><div class="hpf hpf2" id="hf2" style="width:100%"></div><div class="hpt" id="ht2">3/3</div></div></div>
 <div class="hrt" id="hr2"></div>
-<div class="shui"><span class="shi" id="si2_0">🛡️</span><span class="shi" id="si2_1">🛡️</span><span class="shi" id="si2_2">🛡️</span><button class="shb" id="sb2" disabled>E키</button></div>
+<div class="shui"><span class="shi" id="si2_0">🛡️</span><span class="shi" id="si2_1">🛡️</span><span class="shi" id="si2_2">🛡️</span><button type="button" class="shb" id="sb2" onclick="useShield('p2')" disabled aria-label="플레이어 2 쉴드 사용">🛡️ 쉴드</button></div>
 <div class="jw" id="j2"></div>
 <div class="stag2" id="st2">대기</div>
 </div>
@@ -365,7 +414,8 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 <div class="aim-tmbar"><div class="aim-tmfill" id="aimTmF" style="width:100%"></div></div>
 <button class="fire-btn" id="fireBtn" onclick="doFire()">🔫 발사!</button>
 <button type="button" class="dev-skill aim-only" id="devSkillFocus" onclick="useDevSkill('focus')">🎯 정밀 조준 (F5) · 조준 +2초</button>
-<div class="aim-hint">클릭/<span class="key-badge">SPACE</span>=발사 · <span class="key-badge">E</span>=쉴드</div>
+<button type="button" class="aim-shield" id="aimShieldBtn" onclick="useAimShield()">🛡️ 방어하기</button>
+<div class="aim-hint"><span class="desktop-hint">클릭/<span class="key-badge">SPACE</span>=발사 · <span class="key-badge">E</span>=쉴드</span><span class="touch-hint">조준 영역을 드래그한 뒤 발사 버튼을 누르세요</span></div>
 <div class="aim-result" id="aimRes"></div>
 </div>
 
@@ -827,6 +877,7 @@ function useDevSkill(type){
   if(type!=='focus')$('wbox').innerHTML=`<span class="inf">${{time:'⚡ 시간 +5초',heal:'❤️ HP +1',shield:'🛡️ 쉴드 +1'}[type]}</span>`;
   sfx('coin');
   updateDevSkillUI();
+  if(type!=='focus')$('iS').focus(); // 모바일 버튼 사용 후 타이핑을 이어갈 수 있게 합니다.
 }
 
 function goScr(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));$(id).classList.add('on')}
@@ -880,10 +931,27 @@ function dJ1(st){$('j1').innerHTML=auraHTML(getAuraId(),0)+jSVG('R',getCol(),st,
 function dJ2(st){$('j2').innerHTML=jSVG('L','#ff2a85',st,'default','')}
 function dJ(w,st){w==='p1'?dJ1(st):dJ2(st)}
 function rHP(w){const d=G[w],n=w==='p1'?'1':'2';$('hf'+n).style.width=(d.hp/d.mx*100)+'%';$('ht'+n).textContent=d.hp+'/'+d.mx;let h='';for(let i=0;i<d.mx;i++)h+=`<span class="ht ${i<d.hp?'ht-on':'ht-off'}">${i<d.hp?'❤️':'🖤'}</span>`;$('hr'+n).innerHTML=h;updSh(w)}
-function updSh(w){const d=G[w],n=w==='p1'?'1':'2';for(let i=0;i<3;i++)$('si'+n+'_'+i).classList.toggle('ud',i>=d.sh);const b=$('sb'+n);if(d.sh<=0){b.disabled=true;b.textContent='없음';b.classList.remove('on')}else if(d.shOn){b.classList.add('on');b.textContent='🛡️ON!'}else{b.classList.remove('on');b.textContent='🛡️('+d.sh+')E';b.disabled=!G.aimPhase}}
+function updSh(w){
+  const d=G[w],n=w==='p1'?'1':'2',b=$('sb'+n);
+  for(let i=0;i<3;i++)$('si'+n+'_'+i).classList.toggle('ud',i>=d.sh);
+  b.classList.toggle('on',d.shOn);
+  b.textContent=d.shOn?'🛡️ ON':d.sh>0?'🛡️ '+d.sh+'회':'🛡️ 없음';
+  b.disabled=!G.aimPhase||G.fired||G.aimLo!==w||d.sh<=0||d.shOn||(G.mode==='ai'&&w==='p2');
+}
+function useShield(w){
+  if(!G.aimPhase||G.fired||G.aimLo!==w||!G[w]||G[w].sh<=0||G[w].shOn||G.mode==='ai'&&w==='p2')return;
+  actSh(w);
+}
+function updateAimShieldUI(){
+  const defender=G.aimLo;
+  const available=G.mode!=='ai'&&G.aimPhase&&!G.fired&&defender&&G[defender].sh>0&&
+    !G[defender].shOn&&$('aimOv').classList.contains('on');
+  $('aimShieldBtn').style.display=available?'block':'none';
+}
+function useAimShield(){useShield(G.aimLo)}
 function actSh(w){const d=G[w];if(d.sh<=0||d.shOn)return;d.shOn=true;d.sh--;sfx('shield');dJ(w,'shield');
 const pan=$('pan'+(w==='p1'?'1':'2'));let o=pan.querySelector('.sb');if(o)o.remove();
-const b=document.createElement('div');b.className='sb';pan.appendChild(b);updSh(w);
+const b=document.createElement('div');b.className='sb';pan.appendChild(b);updSh(w);updateAimShieldUI();
 if(G.aimPhase){const ar=$('aimArea');let nt=ar.querySelector('.aim-sn');if(nt)nt.remove();nt=document.createElement('div');nt.className='aim-sn';nt.textContent='🛡️ '+G[w].n+' 쉴드 발동!';ar.appendChild(nt);setTimeout(()=>nt.remove(),1500);
 $('aimTgt').innerHTML=w==='p1'?jSVG('R',getCol(),'shield',getGunId(),getHat()):jSVG('L','#ff2a85','shield','default','')}}
 
@@ -891,7 +959,7 @@ document.addEventListener('keydown',e=>{
 if(['F2','F3','F4','F5'].includes(e.code)&&!e.repeat&&DEV_BACKUP&&G.mode==='ai'&&$('scrGame').classList.contains('on')){
   e.preventDefault();useDevSkill({F2:'time',F3:'heal',F4:'shield',F5:'focus'}[e.code]);
 }
-if(e.code==='KeyE'&&G.aimPhase){e.preventDefault();const d=G.aimLo;if(d&&G[d].sh>0&&!G[d].shOn)actSh(d)}
+if(e.code==='KeyE'&&G.aimPhase){e.preventDefault();useShield(G.aimLo)}
 if(e.code==='Space'&&G.aimPhase&&!G.fired){e.preventDefault();doFire()}});
 
 function getW(){
@@ -1070,6 +1138,7 @@ function tmUp(){
   updateDevSkillUI();
   cleanAllTimers();
   $('iS').disabled=true;
+  $('iS').blur();
   $('wbox').innerHTML='<span class="inf">⏰ 시간 초과!</span>';
   setTimeout(()=>{
     if(!G.on && document.getElementById('scrGame').classList.contains('on')){
@@ -1119,6 +1188,7 @@ function rWin(w){
   clearInterval(G.tid);G.tid=null;
   clearTimeout(G.aiTid);G.aiTid=null;
   $('iS').disabled=true;
+  $('iS').blur();
   G.fired=false;
   G.aiTypo=false;G.aiTypoChar='';
   const l=w==='p1'?'p2':'p1';
@@ -1126,9 +1196,9 @@ function rWin(w){
   $(l==='p1'?'st1':'st2').textContent='😰 위험!';$(l==='p1'?'st1':'st2').style.color='#f55';
   $('wbox').innerHTML=`<span class="inf">${esc(G[w].n)} 🎯 조준 모드!</span>`;
   G.aimPhase=true;G.aimSh=w;G.aimLo=l;
-  if(G[l].sh>0){$('sb'+(l==='p1'?'1':'2')).disabled=false;updSh(l)}
+  updSh(l);
   if(w==='p2'&&G.mode==='ai'){
-    if(G.p1.sh>0){$('sb1').disabled=false;updSh('p1')}
+    updSh('p1');
     $('wbox').innerHTML=`<span class="inf">🤖 AI 조준 중! <span class="key-badge">E</span>키로 쉴드!</span>`;
     setTimeout(()=>{
       if(!document.getElementById('scrGame').classList.contains('on'))return;
@@ -1152,6 +1222,7 @@ function startAim(sh,tg){
   G.fired=false;G.aimTime=3;
   $('aimOv').classList.add('on');
   updateDevSkillUI();
+  updateAimShieldUI();
   $('aimTitle').textContent=G[sh].n+' 🎯 조준!';$('aimTitle').style.color=sh==='p1'?'#00f2fe':'#ff2a85';
   $('aimSub').textContent=G[tg].n+'을(를) 맞춰라!';$('aimRes').textContent='';$('fireBtn').disabled=false;$('aimTmF').style.width='100%';
   const ar=$('aimArea'),aw=ar.offsetWidth,ah=ar.offsetHeight,t=$('aimTgt');
@@ -1168,18 +1239,21 @@ function startAim(sh,tg){
     G.aimAid=requestAnimationFrame(mv);
   }
   t.style.left='0';t.style.top='0';G.aimAid=requestAnimationFrame(mv);
-  ar.onmousemove=e=>{const r=ar.getBoundingClientRect();cr.style.left=cl(e.clientX-r.left-23,-10,aw-36)+'px';cr.style.top=cl(e.clientY-r.top-23,-10,ah-36)+'px'};
+  const moveCross=(x,y)=>{const r=ar.getBoundingClientRect();cr.style.left=cl(x-r.left-23,-10,aw-36)+'px';cr.style.top=cl(y-r.top-23,-10,ah-36)+'px'};
+  ar.onmousemove=e=>moveCross(e.clientX,e.clientY);
+  // 터치 조준은 발사와 분리합니다. 터치의 합성 클릭이 즉시 발사하지 않도록 막습니다.
+  ar.ontouchstart=ar.ontouchmove=e=>{e.preventDefault();moveCross(e.touches[0].clientX,e.touches[0].clientY)};
   ar.onclick=()=>{if(!G.fired)doFire()};
   clearInterval(G.aimTid);
   G.aimTid=setInterval(()=>{
-    G.aimTime-=.05;$('aimTmF').style.width=Math.max(0,G.aimTime/3*100)+'%';
+    G.aimTime-=.05;$('aimTmF').style.width=cl(G.aimTime/3*100,0,100)+'%';
     if(G.aimTime<=0){clearInterval(G.aimTid);G.aimTid=null;if(!G.fired)aimTO()}
   },50);
 }
 
 function aimTO(){
   if(G.fired)return;G.fired=true;
-  updateDevSkillUI();
+  updateDevSkillUI();updateAimShieldUI();
   if(G.aimAid)cancelAnimationFrame(G.aimAid);G.aimAid=null;
   clearInterval(G.aimTid);G.aimTid=null;
   $('fireBtn').disabled=true;$('aimRes').textContent='⏰ 시간초과 MISS!';$('aimRes').style.color='#fd0';sfx('miss');
@@ -1190,7 +1264,7 @@ function aimTO(){
 
 function doFire(){
   if(G.fired||!G.aimPhase)return;G.fired=true;
-  updateDevSkillUI();
+  updateDevSkillUI();updateAimShieldUI();
   clearInterval(G.aimTid);G.aimTid=null;
   if(G.aimAid)cancelAnimationFrame(G.aimAid);G.aimAid=null;
   $('fireBtn').disabled=true;sfx('shoot');
