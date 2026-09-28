@@ -219,8 +219,10 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 .dpw-row{display:flex;gap:6px}
 .dpw-row input{flex:1;min-width:0;padding:11px 14px;font-size:14px;background:rgba(255,255,255,.04);border:2px solid #2a2a3a;border-radius:9px;color:#fff;outline:none;transition:all .25s}
 .dpw-row input:focus{border-color:#fd0;box-shadow:0 0 14px rgba(255,221,0,.3)}
-.dpw-eye{flex:0 0 auto;padding:0 12px;font-size:12.5px;font-weight:800;white-space:nowrap;cursor:pointer;background:rgba(255,221,0,.06);border:2px solid #fd0;border-radius:9px;color:#fd0;transition:all .2s}
+.dpw-eye{width:100%;margin-top:8px;padding:9px;font-size:12.5px;font-weight:800;cursor:pointer;background:rgba(255,221,0,.06);border:2px solid #fd0;border-radius:9px;color:#fd0}
 .dpw-eye:hover{background:rgba(255,221,0,.18);box-shadow:0 0 12px rgba(255,221,0,.4)}
+.dpw-ov.reveal-ov{z-index:250}
+.dpw-error{min-height:18px;margin-top:8px;font-size:12px;color:#f66}
 .dpw-btns{display:flex;gap:8px;margin-top:14px}
 .dpw-btns button{flex:1;padding:11px;font-size:13.5px;font-weight:800;border-radius:9px;cursor:pointer;background:rgba(255,255,255,.02);border:2px solid;transition:all .2s}
 .dpw-ok{color:#fd0;border-color:#fd0}
@@ -360,14 +362,28 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 <div class="dpw-ov" id="devPwOv">
   <div class="dpw-box" id="devPwBox">
     <div class="dpw-tit">🔑 개발자 비밀번호 입력</div>
-    <div class="dpw-sub">👁 버튼을 누르면 비밀번호를 보이게/안 보이게 할 수 있어요</div>
+    <div class="dpw-sub">비밀번호는 기본적으로 가려집니다. 보기 코드를 입력해야 볼 수 있습니다.</div>
     <div class="dpw-row">
-      <input type="password" id="devPwInput" placeholder="비밀번호" autocomplete="off">
-      <button type="button" class="dpw-eye" id="devPwEye" onclick="toggleDevPw()" title="보이기/숨기기">👁 보이기</button>
+      <input type="password" id="devPwInput" placeholder="비밀번호" autocomplete="new-password" autocapitalize="off" spellcheck="false">
     </div>
+    <button type="button" class="dpw-eye" id="devPwEye" onclick="toggleDevPw()">👁 비밀번호 보기</button>
     <div class="dpw-btns">
       <button type="button" class="dpw-ok" onclick="submitDevPw()">✅ 확인</button>
       <button type="button" class="dpw-cancel" onclick="closeDevPw()">❌ 취소</button>
+    </div>
+  </div>
+</div>
+<div class="dpw-ov reveal-ov" id="revealPwOv" role="dialog" aria-modal="true" aria-labelledby="revealPwTitle">
+  <div class="dpw-box" id="revealPwBox">
+    <div class="dpw-tit" id="revealPwTitle">👁 비밀번호 보기</div>
+    <div class="dpw-sub">비밀번호를 보려면 보기 코드를 입력하세요.</div>
+    <div class="dpw-row">
+      <input type="password" id="revealPwInput" placeholder="보기 코드" autocomplete="new-password" autocapitalize="off" spellcheck="false">
+    </div>
+    <div class="dpw-error" id="revealPwError" role="alert"></div>
+    <div class="dpw-btns">
+      <button type="button" class="dpw-ok" onclick="submitRevealPw()">✅ 확인</button>
+      <button type="button" class="dpw-cancel" onclick="closeRevealPw()">❌ 취소</button>
     </div>
   </div>
 </div>
@@ -376,7 +392,11 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 <script>
 function $(id){return document.getElementById(id)}
 const SAVE='jolla_legend_v4';
-const DEV_PW='gjwowls'; // 🔑 설정하신 개발자 비밀번호
+// 정적 HTML에서는 서버 인증이 불가능합니다. 해시와 암호화 데이터는 평문 노출만 줄입니다.
+const DEV_PW_HASH='1798d2b3b11512223bfa39589ceda38968e28d5ea317cf82e75d7102e9d7c9a9';
+// 보기 코드를 키로 사용하므로 올바른 코드를 입력해야 비밀번호를 복호화할 수 있습니다.
+const REVEAL_SECRET={salt:'wynHJcvyjhSrdKRXv3em4Q==',iv:'tVCl+UCRWlf4eEAe',data:'wRlv1cn3LRKf8N8lNPnCEALWi2nVkkU='};
+let revealAttempt=0;
 let USER,UID=0;
 let DEV_BACKUP=null; // 🔑 개발자 모드 진입 전 상태 백업
 
@@ -418,33 +438,86 @@ function resetData(){
   }
 }
 
-// 🔑 개발자 치트 모드 활성화 함수 (비밀번호: gjwowls)
-// 비밀번호 입력 창 열기
+// 🔑 개발자 비밀번호 입력 창 열기
 function devCheat(){
+  closeRevealPw();
   const inp=$('devPwInput');
   inp.value='';
-  inp.type='password';        // 기본: 안 보이게
-  $('devPwEye').textContent='👁 보이기';
+  inp.type='password';
+  $('devPwEye').textContent='👁 비밀번호 보기';
   $('devPwOv').classList.add('on');
-  setTimeout(()=>inp.focus(),50);
-}
-// 👁 보이기/안 보이게 토글
-function toggleDevPw(){
-  const inp=$('devPwInput');
-  const hidden=(inp.type==='password');
-  inp.type=hidden?'text':'password';
-  $('devPwEye').textContent=hidden?'🙈 숨기기':'👁 보이기';
-  inp.focus();
+  setTimeout(()=>{if($('devPwOv').classList.contains('on'))inp.focus()},50);
 }
 function closeDevPw(){
   $('devPwOv').classList.remove('on');
-  $('devPwInput').value='';
+  closeRevealPw();
+  const inp=$('devPwInput');
+  inp.value='';
+  inp.type='password';
+  $('devPwEye').textContent='👁 비밀번호 보기';
+}
+function toggleDevPw(){
+  const inp=$('devPwInput');
+  if(inp.type==='text'){
+    inp.value=''; // 화면에 표시했던 비밀번호는 숨길 때 지웁니다.
+    inp.type='password';
+    $('devPwEye').textContent='👁 비밀번호 보기';
+    inp.focus();
+  }else{
+    $('revealPwInput').value='';
+    $('revealPwError').textContent='';
+    $('revealPwOv').classList.add('on');
+    $('revealPwInput').focus();
+  }
+}
+function closeRevealPw(){
+  revealAttempt++; // 닫은 뒤 도착한 비동기 복호화 결과는 무시합니다.
+  $('revealPwOv').classList.remove('on');
+  $('revealPwInput').value='';
+  $('revealPwError').textContent='';
+  if($('devPwOv').classList.contains('on'))$('devPwInput').focus();
+}
+function fromBase64(s){return Uint8Array.from(atob(s),c=>c.charCodeAt(0))}
+async function submitRevealPw(){
+  const code=$('revealPwInput').value;
+  if(!code)return;
+  const attempt=++revealAttempt;
+  try{
+    const keyMaterial=await crypto.subtle.importKey('raw',new TextEncoder().encode(code),'PBKDF2',false,['deriveKey']);
+    const key=await crypto.subtle.deriveKey(
+      {name:'PBKDF2',salt:fromBase64(REVEAL_SECRET.salt),iterations:150000,hash:'SHA-256'},
+      keyMaterial,{name:'AES-GCM',length:256},false,['decrypt']);
+    const plain=await crypto.subtle.decrypt(
+      {name:'AES-GCM',iv:fromBase64(REVEAL_SECRET.iv)},key,fromBase64(REVEAL_SECRET.data));
+    if(attempt!==revealAttempt||!$('revealPwOv').classList.contains('on'))return;
+    closeRevealPw();
+    const inp=$('devPwInput');
+    inp.value=new TextDecoder().decode(plain);
+    inp.type='text';
+    $('devPwEye').textContent='🙈 비밀번호 숨기기';
+    inp.focus();
+  }catch(e){
+    if(attempt!==revealAttempt||!$('revealPwOv').classList.contains('on'))return;
+    $('revealPwError').textContent=globalThis.crypto?.subtle?'보기 코드가 올바르지 않습니다.':'보안 연결(HTTPS)에서 실행해 주세요.';
+    $('revealPwInput').value='';
+    $('revealPwInput').focus();
+  }
 }
 // 확인 버튼 / Enter 키로 제출
-function submitDevPw(){
-  const pw=$('devPwInput').value;
-  if(!pw.trim()){sfx('typo');return}
-  if(pw.trim()===DEV_PW){
+async function submitDevPw(){
+  if($('revealPwOv').classList.contains('on'))return;
+  const pw=$('devPwInput').value.trim();
+  if(!pw){sfx('typo');return}
+  let hash;
+  try{
+    const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pw));
+    hash=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
+  }catch(e){
+    alert('비밀번호를 확인할 수 없습니다. HTTPS 등 보안 연결에서 실행해 주세요.');
+    return;
+  }
+  if(!$('devPwOv').classList.contains('on')||$('devPwInput').value.trim()!==pw)return;
+  if(hash===DEV_PW_HASH){
     closeDevPw();
     // 원상복구를 위해 치트 적용 전 상태 백업 (이미 개발자 모드면 기존 백업 유지)
     if(!DEV_BACKUP) DEV_BACKUP=JSON.parse(JSON.stringify(USER));
@@ -471,6 +544,11 @@ function submitDevPw(){
 }
 // 비밀번호 입력창 키 이벤트 (Enter=확인, Esc=취소)
 document.addEventListener('keydown',e=>{
+  if($('revealPwOv').classList.contains('on')){
+    if(e.key==='Enter'){e.preventDefault();submitRevealPw()}
+    else if(e.key==='Escape'){e.preventDefault();closeRevealPw()}
+    return;
+  }
   if(!$('devPwOv').classList.contains('on'))return;
   if(e.key==='Enter'){e.preventDefault();submitDevPw()}
   else if(e.key==='Escape'){closeDevPw()}
