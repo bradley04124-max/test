@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>⚡ 졸라맨 타자 배틀 LEGENDARY</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -176,7 +176,8 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 .gi:disabled{opacity:.3;cursor:not-allowed}
 .gi.ok{border-color:#0f8;box-shadow:0 0 16px rgba(0,255,136,.4)}
 .gi.er{border-color:#f44;box-shadow:0 0 16px rgba(255,68,68,.4)}
-.htxt{color:#444;font-size:10px;text-align:center;margin-top:2px}
+.htxt{color:#777;font-size:10px;text-align:center;margin-top:2px}
+.touch-hint{display:none}
 .aim-ov{display:none;position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.9);flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:18px}
 .aim-ov.on{display:flex}
 .aim-title{font-size:20px;font-weight:900;text-shadow:0 0 14px currentColor;letter-spacing:1px}
@@ -198,6 +199,7 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 .fire-btn{padding:12px 42px;font-size:18px;font-weight:900;border:3px solid #f22;border-radius:13px;background:rgba(255,0,0,.16);color:#f44;cursor:pointer;box-shadow:0 0 18px rgba(255,0,0,.35);letter-spacing:1px;transition:all .18s}
 .fire-btn:hover{background:rgba(255,0,0,.32);transform:scale(1.06);box-shadow:0 0 30px rgba(255,0,0,.6)}
 .fire-btn:disabled{opacity:.28;cursor:not-allowed;transform:none}
+.aim-shield{display:none;min-height:44px;padding:8px 20px;border:2px solid #4af;border-radius:10px;background:rgba(68,170,255,.18);color:#9df;font-weight:800;cursor:pointer}
 .key-badge{display:inline-block;padding:1px 6px;border:1px solid #666;border-radius:4px;background:rgba(255,255,255,.1);color:#fff;font-weight:800;font-size:11px}
 .dmf{position:absolute;font-size:28px;font-weight:900;color:#f22;text-shadow:0 0 12px #f00;z-index:60;pointer-events:none;animation:dfa 1s forwards}
 @keyframes dfa{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-46px) scale(1.3);opacity:0}}
@@ -210,8 +212,8 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 .cdov.on{display:flex}
 .cdn{font-size:120px;font-weight:900;color:#fd0;text-shadow:0 0 36px #fd0,0 0 70px #f80;animation:cpa .5s ease}
 @keyframes cpa{0%{transform:scale(2.6);opacity:0}60%{transform:scale(.88)}100%{transform:scale(1);opacity:1}}
-.rov{display:none;position:fixed;inset:0;z-index:220;background:rgba(0,0,0,.94);flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:18px}
-.dpw-ov{display:none;position:fixed;inset:0;z-index:240;background:rgba(0,0,0,.88);align-items:center;justify-content:center;padding:18px}
+.rov{display:none;position:fixed;inset:0;z-index:320;background:rgba(0,0,0,.94);flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:18px}
+.dpw-ov{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.88);align-items:center;justify-content:center;padding:18px}
 .dpw-ov.on{display:flex}
 .dpw-box{width:340px;max-width:94vw;background:#0d0d18;border:2px solid #fd0;border-radius:14px;padding:22px 20px;box-shadow:0 0 30px rgba(255,221,0,.35),inset 0 0 24px rgba(255,221,0,.05);text-align:center}
 .dpw-tit{font-size:16px;font-weight:900;color:#fd0;margin-bottom:4px;letter-spacing:.5px}
@@ -219,8 +221,10 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 .dpw-row{display:flex;gap:6px}
 .dpw-row input{flex:1;min-width:0;padding:11px 14px;font-size:14px;background:rgba(255,255,255,.04);border:2px solid #2a2a3a;border-radius:9px;color:#fff;outline:none;transition:all .25s}
 .dpw-row input:focus{border-color:#fd0;box-shadow:0 0 14px rgba(255,221,0,.3)}
-.dpw-eye{flex:0 0 auto;padding:0 12px;font-size:12.5px;font-weight:800;white-space:nowrap;cursor:pointer;background:rgba(255,221,0,.06);border:2px solid #fd0;border-radius:9px;color:#fd0;transition:all .2s}
+.dpw-eye{width:100%;margin-top:8px;padding:9px;font-size:12.5px;font-weight:800;cursor:pointer;background:rgba(255,221,0,.06);border:2px solid #fd0;border-radius:9px;color:#fd0}
 .dpw-eye:hover{background:rgba(255,221,0,.18);box-shadow:0 0 12px rgba(255,221,0,.4)}
+.dpw-ov.reveal-ov{z-index:410}
+.dpw-error{min-height:18px;margin-top:8px;font-size:12px;color:#f66}
 .dpw-btns{display:flex;gap:8px;margin-top:14px}
 .dpw-btns button{flex:1;padding:11px;font-size:13.5px;font-weight:800;border-radius:9px;cursor:pointer;background:rgba(255,255,255,.02);border:2px solid;transition:all .2s}
 .dpw-ok{color:#fd0;border-color:#fd0}
@@ -228,6 +232,11 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 .dpw-cancel{color:#8a8a9c;border-color:#2a2a3a}
 .dpw-cancel:hover{color:#fff;border-color:#888}
 .dpw-box.shk{animation:sshka .32s}
+.dev-skills{display:none;width:100%;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:4px}
+.dev-skill{padding:9px 6px;border:2px solid #fd0;border-radius:9px;background:rgba(255,221,0,.12);color:#fd0;font-size:11px;font-weight:800;cursor:pointer;box-shadow:0 0 12px rgba(255,221,0,.2)}
+.dev-skill:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+.dev-skill.aim-only{display:none;margin-top:6px;padding:10px 14px}
+.dev-item-label{color:#fd0;font-weight:800}
 .rov.on{display:flex}
 .rtit{font-size:36px;font-weight:900;animation:rga 1.1s infinite;letter-spacing:3px}
 @keyframes rga{0%,100%{text-shadow:0 0 14px currentColor}50%{text-shadow:0 0 38px currentColor,0 0 72px currentColor}}
@@ -245,7 +254,54 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 @keyframes wd{0%,100%{opacity:.35}50%{opacity:1}}
 .spd-preview{color:#fd0;font-size:11px;text-align:center;margin-top:3px;min-height:15px}
 .wcount{color:#555;font-size:10px;text-align:center;margin-top:4px}
-@media(max-width:820px){.arena{flex-direction:column;align-items:center}.ppan{width:100%;max-width:340px}.wbox{font-size:18px}.title{font-size:24px}.aim-area{width:300px;height:170px}.shop-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:820px){
+  .scr{min-height:100dvh;justify-content:flex-start;padding:88px 16px 24px}
+  .title{font-size:28px}
+  .arena{flex:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:'player enemy' 'typing typing';align-content:start;gap:10px}
+  #pan1{grid-area:player}#pan2{grid-area:enemy}.ccol{grid-area:typing;width:100%}
+  .ppan{width:100%;min-width:0;gap:2px;padding:8px}
+  .jw,.jw svg{width:86px;height:96px}
+  .jw .aura{transform:scale(.72);transform-origin:center}
+  .wbox{font-size:clamp(17px,3.4vw,22px);min-height:48px;padding:10px 12px}
+  .shop-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tab-content{max-height:none;overflow:visible}
+  .aim-area{width:min(410px,100%);height:clamp(150px,28dvh,210px);touch-action:none}
+  .aim-tmbar{width:min(370px,100%)}
+  .aim-ov,.dpw-ov,.rov{overflow-y:auto;max-height:100dvh}
+}
+@media(max-width:520px){
+  .scr{padding:calc(94px + env(safe-area-inset-top)) 12px calc(22px + env(safe-area-inset-bottom))}
+  .title{font-size:clamp(21px,7vw,28px)}
+  .top-btns{top:calc(7px + env(safe-area-inset-top));left:8px;right:98px;flex-wrap:wrap;gap:4px}
+  .top-btn{min-height:34px;padding:5px 8px;font-size:10px}
+  .coin-bar{top:calc(7px + env(safe-area-inset-top));right:8px;padding:7px 9px;font-size:12px}
+  .btn,.fld,.dvd,.mlist{width:min(330px,100%)}
+  .btn{min-height:44px}
+  .fld input,.fld select,.gi,.dpw-row input{font-size:16px}
+  .ghud{gap:5px}.ghud .btn-s{min-width:44px;min-height:44px;padding:7px}
+  .rbdg{font-size:13px}
+  .arena{gap:8px}.ppan{padding:6px;overflow:hidden}.pn{font-size:12px}
+  .jw,.jw svg{width:70px;height:78px}.jw .aura{transform:scale(.56)}
+  .hrt .ht{font-size:12px}.stag2{font-size:9px}.hpl{display:none}
+  .shb{min-height:40px;min-width:80px;padding:5px;font-size:11px}
+  .ccol{gap:6px}.vsg{display:none}
+  .tab{font-size:11px;line-height:1.3;padding:10px 2px}
+  .tab-content{padding:8px}.shop-grid{gap:7px}.shop-item{padding:6px 3px}
+  .wbox{font-size:clamp(16px,5vw,20px);letter-spacing:.5px}
+  .htxt{font-size:11px}.dev-skill{min-height:44px;font-size:11px}
+  .aim-ov{justify-content:center;padding:calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom))}
+  .aim-title{font-size:18px}.aim-area{height:clamp(145px,26dvh,185px)}
+  .fire-btn{min-height:48px;padding:8px 32px}.aim-hint{color:#aaa}
+  .dpw-ov,.rov{padding:calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom))}
+  .dpw-box{width:min(340px,100%)}.dpw-btns button{min-height:44px}
+}
+@media(max-width:360px){.scr{padding-top:calc(108px + env(safe-area-inset-top))}.shop-item .rar{font-size:7px;padding:2px 3px}.dev-skills{gap:4px}.dev-skill{font-size:10px;padding:6px 3px}}
+@media(max-height:560px){.aim-ov,.dpw-ov,.rov{justify-content:flex-start}}
+@media(hover:none) and (pointer:coarse){
+  .touch-hint{display:inline}.desktop-hint{display:none}
+  .btn:hover,.shop-item:hover{transform:none}
+  .aim-area{touch-action:none}
+}
 </style>
 </head>
 <body>
@@ -323,7 +379,7 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 <div class="pn c1" id="nm1">P1</div>
 <div class="hpw"><div class="hpl">HP</div><div class="hpb"><div class="hpf hpf1" id="hf1" style="width:100%"></div><div class="hpt" id="ht1">3/3</div></div></div>
 <div class="hrt" id="hr1"></div>
-<div class="shui"><span class="shi" id="si1_0">🛡️</span><span class="shi" id="si1_1">🛡️</span><span class="shi" id="si1_2">🛡️</span><button class="shb" id="sb1" disabled>E키</button></div>
+<div class="shui"><span class="shi" id="si1_0">🛡️</span><span class="shi" id="si1_1">🛡️</span><span class="shi" id="si1_2">🛡️</span><button type="button" class="shb" id="sb1" onclick="useShield('p1')" disabled aria-label="플레이어 1 쉴드 사용">🛡️ 쉴드</button></div>
 <div class="jw" id="j1"></div>
 <div class="stag2" id="st1">대기</div>
 </div>
@@ -331,15 +387,20 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 <div class="vsg">VS</div>
 <div class="wbox" id="wbox"><span class="inf">준비!</span></div>
 <div class="tmw"><div class="tmb"><div class="tmf" id="tmf" style="width:100%"></div></div><div class="tmt" id="tmt">15.0초</div></div>
-<div style="width:100%"><input class="gi" id="iS" placeholder="여기에 타이핑!" autocomplete="off" disabled></div>
+<div style="width:100%"><input class="gi" id="iS" placeholder="여기에 타이핑!" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" disabled></div>
 <div class="ai-disp" id="aiDisp" style="display:none"><span style="color:#666;font-size:10px">🤖 AI: </span><span id="aiTS"></span><span class="ac"></span><span id="aiRS"></span></div>
-<div class="htxt">먼저 완성→조준→발사! <span class="key-badge">E</span>=쉴드</div>
+<div class="htxt">먼저 완성→조준→발사! <span class="desktop-hint"><span class="key-badge">E</span>=쉴드</span><span class="touch-hint">방어할 때 🛡️ 쉴드 버튼을 누르세요</span></div>
+<div class="dev-skills" id="devSkills">
+  <button type="button" class="dev-skill" id="devSkillTime" onclick="useDevSkill('time')">⚡ 오버클럭 (F2) · 시간 +5초</button>
+  <button type="button" class="dev-skill" id="devSkillHeal" onclick="useDevSkill('heal')">❤️ 응급 수리 (F3) · HP +1</button>
+  <button type="button" class="dev-skill" id="devSkillShield" onclick="useDevSkill('shield')">🛡️ 방어 충전 (F4) · 쉴드 +1</button>
+</div>
 </div>
 <div class="ppan" id="pan2">
 <div class="pn c2" id="nm2">P2</div>
 <div class="hpw"><div class="hpl">HP</div><div class="hpb"><div class="hpf hpf2" id="hf2" style="width:100%"></div><div class="hpt" id="ht2">3/3</div></div></div>
 <div class="hrt" id="hr2"></div>
-<div class="shui"><span class="shi" id="si2_0">🛡️</span><span class="shi" id="si2_1">🛡️</span><span class="shi" id="si2_2">🛡️</span><button class="shb" id="sb2" disabled>E키</button></div>
+<div class="shui"><span class="shi" id="si2_0">🛡️</span><span class="shi" id="si2_1">🛡️</span><span class="shi" id="si2_2">🛡️</span><button type="button" class="shb" id="sb2" onclick="useShield('p2')" disabled aria-label="플레이어 2 쉴드 사용">🛡️ 쉴드</button></div>
 <div class="jw" id="j2"></div>
 <div class="stag2" id="st2">대기</div>
 </div>
@@ -352,7 +413,9 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 <div class="aim-area" id="aimArea"><div class="aim-tgt" id="aimTgt"></div><div class="aim-cross" id="aimCross"><div class="dot"></div></div></div>
 <div class="aim-tmbar"><div class="aim-tmfill" id="aimTmF" style="width:100%"></div></div>
 <button class="fire-btn" id="fireBtn" onclick="doFire()">🔫 발사!</button>
-<div class="aim-hint">클릭/<span class="key-badge">SPACE</span>=발사 · <span class="key-badge">E</span>=쉴드</div>
+<button type="button" class="dev-skill aim-only" id="devSkillFocus" onclick="useDevSkill('focus')">🎯 정밀 조준 (F5) · 조준 +2초</button>
+<button type="button" class="aim-shield" id="aimShieldBtn" onclick="useAimShield()">🛡️ 방어하기</button>
+<div class="aim-hint"><span class="desktop-hint">클릭/<span class="key-badge">SPACE</span>=발사 · <span class="key-badge">E</span>=쉴드</span><span class="touch-hint">조준 영역을 드래그한 뒤 발사 버튼을 누르세요</span></div>
 <div class="aim-result" id="aimRes"></div>
 </div>
 
@@ -360,14 +423,28 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 <div class="dpw-ov" id="devPwOv">
   <div class="dpw-box" id="devPwBox">
     <div class="dpw-tit">🔑 개발자 비밀번호 입력</div>
-    <div class="dpw-sub">👁 버튼을 누르면 비밀번호를 보이게/안 보이게 할 수 있어요</div>
+    <div class="dpw-sub">비밀번호는 기본적으로 가려집니다. 보기 코드를 입력해야 볼 수 있습니다.</div>
     <div class="dpw-row">
-      <input type="password" id="devPwInput" placeholder="비밀번호" autocomplete="off">
-      <button type="button" class="dpw-eye" id="devPwEye" onclick="toggleDevPw()" title="보이기/숨기기">👁 보이기</button>
+      <input type="password" id="devPwInput" placeholder="비밀번호" autocomplete="new-password" autocapitalize="off" spellcheck="false">
     </div>
+    <button type="button" class="dpw-eye" id="devPwEye" onclick="toggleDevPw()">👁 비밀번호 보기</button>
     <div class="dpw-btns">
       <button type="button" class="dpw-ok" onclick="submitDevPw()">✅ 확인</button>
       <button type="button" class="dpw-cancel" onclick="closeDevPw()">❌ 취소</button>
+    </div>
+  </div>
+</div>
+<div class="dpw-ov reveal-ov" id="revealPwOv" role="dialog" aria-modal="true" aria-labelledby="revealPwTitle">
+  <div class="dpw-box" id="revealPwBox">
+    <div class="dpw-tit" id="revealPwTitle">👁 비밀번호 보기</div>
+    <div class="dpw-sub">비밀번호를 보려면 보기 코드를 입력하세요.</div>
+    <div class="dpw-row">
+      <input type="password" id="revealPwInput" placeholder="보기 코드" autocomplete="new-password" autocapitalize="off" spellcheck="false">
+    </div>
+    <div class="dpw-error" id="revealPwError" role="alert"></div>
+    <div class="dpw-btns">
+      <button type="button" class="dpw-ok" onclick="submitRevealPw()">✅ 확인</button>
+      <button type="button" class="dpw-cancel" onclick="closeRevealPw()">❌ 취소</button>
     </div>
   </div>
 </div>
@@ -376,7 +453,11 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 <script>
 function $(id){return document.getElementById(id)}
 const SAVE='jolla_legend_v4';
-const DEV_PW='gjwowls'; // 🔑 설정하신 개발자 비밀번호
+// 정적 HTML에서는 서버 인증이 불가능합니다. 해시와 암호화 데이터는 평문 노출만 줄입니다.
+const DEV_PW_HASH='1798d2b3b11512223bfa39589ceda38968e28d5ea317cf82e75d7102e9d7c9a9';
+// 보기 코드를 키로 사용하므로 올바른 코드를 입력해야 비밀번호를 복호화할 수 있습니다.
+const REVEAL_SECRET={salt:'wynHJcvyjhSrdKRXv3em4Q==',iv:'tVCl+UCRWlf4eEAe',data:'wRlv1cn3LRKf8N8lNPnCEALWi2nVkkU='};
+let revealAttempt=0;
 let USER,UID=0;
 let DEV_BACKUP=null; // 🔑 개발자 모드 진입 전 상태 백업
 
@@ -404,6 +485,12 @@ function loadUser(){
       if(d.equipped)['body','aura','gun','hat'].forEach(k=>{if(typeof d.equipped[k]==='string')USER.equipped[k]=d.equipped[k]});
     }else USER=defUser();
   }catch(e){USER=defUser()}
+  // 개발자 모드는 메모리에서만 유효합니다. 재접속 시 모든 전용 장비를 회수합니다.
+  for(const cat of ['body','aura','gun','hat']){
+    const restricted=SHOP[cat].filter(it=>it.devOnly).map(it=>it.id);
+    USER.owned[cat]=USER.owned[cat].filter(id=>!restricted.includes(id));
+    if(restricted.includes(USER.equipped[cat]))USER.equipped[cat]=SHOP[cat][0].id;
+  }
   saveUser();
 }
 function saveUser(){try{localStorage.setItem(SAVE,JSON.stringify(USER))}catch(e){}}
@@ -418,33 +505,86 @@ function resetData(){
   }
 }
 
-// 🔑 개발자 치트 모드 활성화 함수 (비밀번호: gjwowls)
-// 비밀번호 입력 창 열기
+// 🔑 개발자 비밀번호 입력 창 열기
 function devCheat(){
+  closeRevealPw();
   const inp=$('devPwInput');
   inp.value='';
-  inp.type='password';        // 기본: 안 보이게
-  $('devPwEye').textContent='👁 보이기';
+  inp.type='password';
+  $('devPwEye').textContent='👁 비밀번호 보기';
   $('devPwOv').classList.add('on');
-  setTimeout(()=>inp.focus(),50);
-}
-// 👁 보이기/안 보이게 토글
-function toggleDevPw(){
-  const inp=$('devPwInput');
-  const hidden=(inp.type==='password');
-  inp.type=hidden?'text':'password';
-  $('devPwEye').textContent=hidden?'🙈 숨기기':'👁 보이기';
-  inp.focus();
+  setTimeout(()=>{if($('devPwOv').classList.contains('on'))inp.focus()},50);
 }
 function closeDevPw(){
   $('devPwOv').classList.remove('on');
-  $('devPwInput').value='';
+  closeRevealPw();
+  const inp=$('devPwInput');
+  inp.value='';
+  inp.type='password';
+  $('devPwEye').textContent='👁 비밀번호 보기';
+}
+function toggleDevPw(){
+  const inp=$('devPwInput');
+  if(inp.type==='text'){
+    inp.value=''; // 화면에 표시했던 비밀번호는 숨길 때 지웁니다.
+    inp.type='password';
+    $('devPwEye').textContent='👁 비밀번호 보기';
+    inp.focus();
+  }else{
+    $('revealPwInput').value='';
+    $('revealPwError').textContent='';
+    $('revealPwOv').classList.add('on');
+    $('revealPwInput').focus();
+  }
+}
+function closeRevealPw(){
+  revealAttempt++; // 닫은 뒤 도착한 비동기 복호화 결과는 무시합니다.
+  $('revealPwOv').classList.remove('on');
+  $('revealPwInput').value='';
+  $('revealPwError').textContent='';
+  if($('devPwOv').classList.contains('on'))$('devPwInput').focus();
+}
+function fromBase64(s){return Uint8Array.from(atob(s),c=>c.charCodeAt(0))}
+async function submitRevealPw(){
+  const code=$('revealPwInput').value;
+  if(!code)return;
+  const attempt=++revealAttempt;
+  try{
+    const keyMaterial=await crypto.subtle.importKey('raw',new TextEncoder().encode(code),'PBKDF2',false,['deriveKey']);
+    const key=await crypto.subtle.deriveKey(
+      {name:'PBKDF2',salt:fromBase64(REVEAL_SECRET.salt),iterations:150000,hash:'SHA-256'},
+      keyMaterial,{name:'AES-GCM',length:256},false,['decrypt']);
+    const plain=await crypto.subtle.decrypt(
+      {name:'AES-GCM',iv:fromBase64(REVEAL_SECRET.iv)},key,fromBase64(REVEAL_SECRET.data));
+    if(attempt!==revealAttempt||!$('revealPwOv').classList.contains('on'))return;
+    closeRevealPw();
+    const inp=$('devPwInput');
+    inp.value=new TextDecoder().decode(plain);
+    inp.type='text';
+    $('devPwEye').textContent='🙈 비밀번호 숨기기';
+    inp.focus();
+  }catch(e){
+    if(attempt!==revealAttempt||!$('revealPwOv').classList.contains('on'))return;
+    $('revealPwError').textContent=globalThis.crypto?.subtle?'보기 코드가 올바르지 않습니다.':'보안 연결(HTTPS)에서 실행해 주세요.';
+    $('revealPwInput').value='';
+    $('revealPwInput').focus();
+  }
 }
 // 확인 버튼 / Enter 키로 제출
-function submitDevPw(){
-  const pw=$('devPwInput').value;
-  if(!pw.trim()){sfx('typo');return}
-  if(pw.trim()===DEV_PW){
+async function submitDevPw(){
+  if($('revealPwOv').classList.contains('on'))return;
+  const pw=$('devPwInput').value.trim();
+  if(!pw){sfx('typo');return}
+  let hash;
+  try{
+    const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pw));
+    hash=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
+  }catch(e){
+    alert('비밀번호를 확인할 수 없습니다. HTTPS 등 보안 연결에서 실행해 주세요.');
+    return;
+  }
+  if(!$('devPwOv').classList.contains('on')||$('devPwInput').value.trim()!==pw)return;
+  if(hash===DEV_PW_HASH){
     closeDevPw();
     // 원상복구를 위해 치트 적용 전 상태 백업 (이미 개발자 모드면 기존 백업 유지)
     if(!DEV_BACKUP) DEV_BACKUP=JSON.parse(JSON.stringify(USER));
@@ -457,9 +597,11 @@ function submitDevPw(){
     saveUser();
     updCoin();
     if($('scrShop').classList.contains('on')) renderShop();
+    if($('scrGame').classList.contains('on'))dJ1('idle');
+    updateDevSkillUI();
     $('devExitBtn').style.display='inline-block';
     sfx('coin');
-    alert('⚡ [개발자 모드 승인 완료!]\n모든 아이템 잠금 해제 & 코인 999,999개가 지급되었습니다!');
+    alert('⚡ [개발자 모드 승인 완료!]\n모든 아이템 잠금 해제 & 코인 999,999개 지급!\n상점의 개발자 전용 장비와 AI 대전 스킬(F2~F5)을 사용할 수 있습니다.');
   } else {
     sfx('typo');
     const box=$('devPwBox');
@@ -471,6 +613,11 @@ function submitDevPw(){
 }
 // 비밀번호 입력창 키 이벤트 (Enter=확인, Esc=취소)
 document.addEventListener('keydown',e=>{
+  if($('revealPwOv').classList.contains('on')){
+    if(e.key==='Enter'){e.preventDefault();submitRevealPw()}
+    else if(e.key==='Escape'){e.preventDefault();closeRevealPw()}
+    return;
+  }
   if(!$('devPwOv').classList.contains('on'))return;
   if(e.key==='Enter'){e.preventDefault();submitDevPw()}
   else if(e.key==='Escape'){closeDevPw()}
@@ -488,6 +635,8 @@ function devExit(){
     saveUser();
     updCoin();
     if($('scrShop').classList.contains('on')) renderShop();
+    if($('scrGame').classList.contains('on'))dJ1('idle');
+    updateDevSkillUI();
     $('devExitBtn').style.display='none';
     sfx('typo');
     alert('✅ 개발자 모드 종료!\n개발자 모드 진입 전 상태로 원상복구되었습니다.');
@@ -529,6 +678,7 @@ gold:`<g><defs><linearGradient id="${u}gd" x1="0" y1="0" x2="0" y2="1"><stop off
 laser:`<g><defs><linearGradient id="${u}l" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e6f"/><stop offset="50%" stop-color="#a0d"/><stop offset="100%" stop-color="#508"/></linearGradient></defs><path d="M0,2 Q0,-2 5,-2 L26,-2 Q32,-2 33,3 L33,7 Q32,11 26,11 L5,11 Q0,11 0,7Z" fill="url(#${u}l)" stroke="#a0d" stroke-width=".9"/><rect x="4" y="0" width="20" height="2" rx="1" fill="#f9f" opacity=".7"/><rect x="9" y="11" width="7" height="13" rx="3" fill="#70a" stroke="#508" stroke-width=".7"/><ellipse cx="18" cy="4.5" rx="7" ry="3.5" fill="#f4f" opacity=".35"><animate attributeName="opacity" values=".2;.6;.2" dur="1.1s" repeatCount="indefinite"/></ellipse><rect x="32" y="0" width="12" height="9" rx="4.5" fill="#90c" stroke="#c5f" stroke-width=".8"/><circle cx="40" cy="4.5" r="3.2" fill="#f6f"><animate attributeName="opacity" values="1;.4;1" dur=".55s" repeatCount="indefinite"/></circle><rect x="43" y="3.5" width="16" height="2" rx="1" fill="#f4f" opacity=".6"><animate attributeName="opacity" values="0;.9;0" dur=".5s" repeatCount="indefinite"/><animate attributeName="width" values="8;22;8" dur=".5s" repeatCount="indefinite"/></rect><circle cx="40" cy="4.5" r="6" fill="#f0f" opacity=".18"><animate attributeName="r" values="4;8;4" dur=".9s" repeatCount="indefinite"/></circle></g>`,
 plasma:`<g><defs><linearGradient id="${u}p" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0ff"/><stop offset="45%" stop-color="#088"/><stop offset="100%" stop-color="#033"/></linearGradient><radialGradient id="${u}pc"><stop offset="0%" stop-color="#fff"/><stop offset="45%" stop-color="#0ff"/><stop offset="100%" stop-color="#088" stop-opacity="0"/></radialGradient></defs><path d="M-2,3 Q-2,-3 4,-3 L28,-3 Q34,-3 35,4 L35,8 Q34,12 28,12 L4,12 Q-2,12 -2,7Z" fill="url(#${u}p)" stroke="#0ff" stroke-width="1"/><rect x="2" y="-1" width="24" height="2.5" rx="1.2" fill="#8ff" opacity=".5"/><rect x="9" y="12" width="8" height="14" rx="3" fill="#066" stroke="#0aa" stroke-width=".7"/><path d="M11,14 L15,14 M11,17.5 L15,17.5 M11,21 L15,21" stroke="#0ff" stroke-width=".9" opacity=".8"/><rect x="4" y="3" width="18" height="4" rx="2" fill="#0ff" opacity=".25"/><circle cx="8" cy="5" r="1.2" fill="#dff"><animate attributeName="opacity" values="1;.2;1" dur=".7s" repeatCount="indefinite"/></circle><circle cx="14" cy="5" r="1.2" fill="#dff"><animate attributeName="opacity" values="2;1;.2" dur=".7s" repeatCount="indefinite"/></circle><circle cx="20" cy="5" r="1.2" fill="#dff"><animate attributeName="opacity" values="1;.2;1" dur=".9s" repeatCount="indefinite"/></circle><circle cx="40" cy="4.5" r="9" fill="url(#${u}pc)" opacity=".65"><animate attributeName="r" values="7;11;7" dur="1.2s" repeatCount="indefinite"/></circle><circle cx="40" cy="4.5" r="4" fill="#0ff"/><circle cx="40" cy="4.5" r="2" fill="#fff"><animate attributeName="opacity" values="1;.5;1" dur=".5s" repeatCount="indefinite"/></circle><path d="M34,0 Q38,-4 44,-1" stroke="#0ff" stroke-width="1" fill="none" opacity=".6"><animate attributeName="opacity" values=".2;.8;.2" dur=".8s" repeatCount="indefinite"/></path><path d="M34,9 Q38,13 44,10" stroke="#0ff" stroke-width="1" fill="none" opacity=".6"><animate attributeName="opacity" values=".8;.2;.8" dur=".8s" repeatCount="indefinite"/></path></g>`,
 dragon:`<g><defs><linearGradient id="${u}d" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fa4"/><stop offset="40%" stop-color="#c50"/><stop offset="100%" stop-color="#620"/></linearGradient><radialGradient id="${u}df"><stop offset="0%" stop-color="#ff8"/><stop offset="40%" stop-color="#f60"/><stop offset="100%" stop-color="#a00" stop-opacity="0"/></radialGradient></defs><path d="M-2,4 Q-3,-3 5,-3 L24,-4 Q32,-4 35,1 L37,5 Q35,10 30,11 L5,12 Q-2,12 -2,6Z" fill="url(#${u}d)" stroke="#f80" stroke-width="1"/><path d="M2,-2 L6,-6 L9,-2Z" fill="#f80" opacity=".85"/><path d="M11,-3 L15,-7 L18,-3Z" fill="#f80" opacity=".85"/><path d="M20,-3.5 L24,-7.5 L27,-3.5Z" fill="#f80" opacity=".85"/><rect x="9" y="12" width="8" height="14" rx="2" fill="#830" stroke="#620" stroke-width=".7"/><path d="M10,14 L16,14 M10,17 L16,17 M10,20 L16,20 M10,23 L16,23" stroke="#fa6" stroke-width=".8" opacity=".7"/><circle cx="8" cy="4" r="1.6" fill="#fe0" opacity=".9"><animate attributeName="opacity" values=".4;1;.4" dur="1s" repeatCount="indefinite"/></circle><circle cx="15" cy="4" r="1.6" fill="#f80" opacity=".9"><animate attributeName="opacity" values="1;.4;1" dur="1s" repeatCount="indefinite"/></circle><text x="24" y="7" font-size="6.5" fill="#fe0" font-weight="900">龍</text><path d="M36,0 L46,3 L46,6 L36,9Z" fill="#f60" opacity=".75"/><circle cx="44" cy="4.5" r="7" fill="url(#${u}df)"><animate attributeName="r" values="5;9;5" dur=".8s" repeatCount="indefinite"/></circle><circle cx="44" cy="4.5" r="2.5" fill="#ff8"/></g>`,
+devblaster:`<g><defs><linearGradient id="${u}dv" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0ff"/><stop offset="50%" stop-color="#95f"/><stop offset="100%" stop-color="#fd0"/></linearGradient></defs><rect x="-2" y="-4" width="39" height="17" rx="5" fill="#0b1133" stroke="#0ff" stroke-width="1.5"/><path d="M1,0 L32,0 L36,4 L32,8 L1,8Z" fill="url(#${u}dv)" opacity=".8"/><rect x="8" y="13" width="9" height="14" rx="2" fill="#315" stroke="#a5f"/><rect x="34" y="-2" width="11" height="13" rx="3" fill="#114" stroke="#fd0"/><circle cx="41" cy="4" r="3" fill="#fff"><animate attributeName="opacity" values="1;.4;1" dur=".6s" repeatCount="indefinite"/></circle><circle cx="43" cy="4" r="9" fill="#0ff" opacity=".15"><animate attributeName="r" values="5;10;5" dur="1s" repeatCount="indefinite"/></circle><path d="M5,-4 L11,-8 L22,-8 L27,-4" fill="none" stroke="#fd0" stroke-width="2"/></g>`,
 cosmic:`<g><defs><linearGradient id="${u}c" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f6f"/><stop offset="35%" stop-color="#a4f"/><stop offset="70%" stop-color="#63f"/><stop offset="100%" stop-color="#309"/></linearGradient><radialGradient id="${u}cc"><stop offset="0%" stop-color="#fff"/><stop offset="30%" stop-color="#f6f"/><stop offset="65%" stop-color="#a4f"/><stop offset="100%" stop-color="#63f" stop-opacity="0"/></radialGradient></defs><path d="M-3,4 Q-4,-4 5,-4 L28,-4 Q36,-4 38,3 L38,7 Q36,13 28,13 L5,13 Q-4,13 -3,6Z" fill="url(#${u}c)" stroke="#c6f" stroke-width="1.1"/><rect x="2" y="-2" width="28" height="2.5" rx="1.2" fill="#fbf" opacity=".55"/><rect x="10" y="13" width="8" height="15" rx="3" fill="#528" stroke="#a4f" stroke-width=".8"/><circle cx="6" cy="4.5" r="1" fill="#fff" opacity=".9"><animate attributeName="opacity" values=".2;1;.2" dur="1.3s" repeatCount="indefinite"/></circle><circle cx="13" cy="2.5" r=".8" fill="#fff" opacity=".7"><animate attributeName="opacity" values="1;.2;1" dur="1.7s" repeatCount="indefinite"/></circle><circle cx="20" cy="6.5" r="1" fill="#fff" opacity=".8"><animate attributeName="opacity" values=".3;1;.3" dur="1.1s" repeatCount="indefinite"/></circle><circle cx="27" cy="3" r=".9" fill="#fff" opacity=".6"><animate attributeName="opacity" values="1;.3;1" dur="1.5s" repeatCount="indefinite"/></circle><ellipse cx="46" cy="5" rx="12" ry="3" fill="none" stroke="#c6f" stroke-width="1" opacity=".55" transform="rotate(-18 46 5)"><animateTransform attributeName="transform" type="rotate" from="-18 46 5" to="342 46 5" dur="4s" repeatCount="indefinite"/></ellipse><circle cx="46" cy="5" r="11" fill="url(#${u}cc)" opacity=".6"><animate attributeName="r" values="8;13;8" dur="1.5s" repeatCount="indefinite"/></circle><circle cx="46" cy="5" r="4.5" fill="#f6f"/><circle cx="46" cy="5" r="2.2" fill="#fff"><animate attributeName="opacity" values="1;.5;1" dur=".6s" repeatCount="indefinite"/></circle></g>`
   };
   return G[gid]||G.default;
@@ -547,7 +697,9 @@ body:[
   {id:'pureice',n:'프로스트 퓨어',c:'#e0f7fa',p:450,r:'e'},
   {id:'gold',n:'루미너스 골드',c:'#ffe259',p:700,r:'l'},
   {id:'violet',n:'딥 바이올렛',c:'#8a2be2',p:1100,r:'l'},
-  {id:'rainbow',n:'프리즘 레인보우',c:'#00ffcc',p:2000,r:'m'}
+  {id:'rainbow',n:'프리즘 레인보우',c:'#00ffcc',p:2000,r:'m'},
+  {id:'devcyan',n:'🧬 개발자 사이언',c:'#55ffff',p:0,r:'m',devOnly:true},
+  {id:'devrose',n:'💗 개발자 로즈',c:'#ff53be',p:0,r:'m',devOnly:true}
 ],
 aura:[
   {id:'none',n:'없음',p:0,r:'c',c1:'#666',c2:'#333',fx:[]},
@@ -561,7 +713,10 @@ aura:[
   {id:'galaxy',n:'🌌 갤럭시',p:1400,r:'l',c1:'#b6f',c2:'#5cf',fx:['ring3','orb','orbrev','star','star','star','base']},
   {id:'dragon',n:'🐉 드래곤',p:1800,r:'l',c1:'#f50',c2:'#fa0',fx:['wing','base','up','up','ring']},
   {id:'prism',n:'🌈 프리즘',p:2200,r:'m',c1:'#f0f',c2:'#0ff',fx:['prism','orb','star','star','base']},
-  {id:'divine',n:'👑 디바인',p:3000,r:'m',c1:'#fe4',c2:'#fff',fx:['rays','ring','orb','up','up','star','star','base']}
+  {id:'divine',n:'👑 디바인',p:3000,r:'m',c1:'#fe4',c2:'#fff',fx:['rays','ring','orb','up','up','star','star','base']},
+  {id:'devmatrix',n:'🛠️ 개발자 매트릭스',p:0,r:'m',devOnly:true,c1:'#0ff',c2:'#fd0',fx:['prism','rays','ring','bolt','bolt','star','base']},
+  {id:'devnova',n:'🌠 개발자 노바',p:0,r:'m',devOnly:true,c1:'#f5f',c2:'#fff',fx:['rays','orb','orbrev','pulse','star','star','base']},
+  {id:'devflame',n:'🔥 개발자 화염',p:0,r:'m',devOnly:true,c1:'#f54',c2:'#fd0',fx:['wing','flash','ring','up','up','up','base']}
 ],
 gun:[
   {id:'default',n:'스탠다드 P9',p:0,r:'c'},
@@ -573,7 +728,8 @@ gun:[
   {id:'laser',n:'포톤 레이저',p:1300,r:'e'},
   {id:'plasma',n:'플라즈마 코어',p:1800,r:'l'},
   {id:'dragon',n:'드래곤슬레이어 龍',p:2500,r:'l'},
-  {id:'cosmic',n:'코스믹 캐논',p:4000,r:'m'}
+  {id:'cosmic',n:'코스믹 캐논',p:4000,r:'m'},
+  {id:'devblaster',n:'🚀 개발자 블래스터',p:0,r:'m',devOnly:true}
 ],
 hat:[
   {id:'none',n:'없음',e:'',p:0,r:'c'},
@@ -587,13 +743,15 @@ hat:[
   {id:'crown',n:'앱솔루트 크라운',e:'👑',p:1200,r:'l'},
   {id:'cybervisor',n:'네온 바이저 2077',e:'🤖',p:1500,r:'l'},
   {id:'zeus',n:'제우스 썬더크라운',e:'⚡',p:2200,r:'l'},
-  {id:'godfire',n:'헬파이어 아우라',e:'🔥',p:3000,r:'m'}
+  {id:'godfire',n:'헬파이어 아우라',e:'🔥',p:3000,r:'m'},
+  {id:'devhalo',n:'🪄 개발자 헤일로',e:'💫',p:0,r:'m',devOnly:true},
+  {id:'devcrown',n:'👑 개발자 왕관',e:'👾',p:0,r:'m',devOnly:true}
 ]};
 const RN={c:'일반',r:'레어',e:'에픽',l:'전설',m:'신화'};
 
 function auraHTML(id,mini){
   const a=SHOP.aura.find(x=>x.id===id);
-  if(!a||!a.fx.length)return '';
+  if(!a||a.devOnly&&!DEV_BACKUP||!a.fx.length)return '';
   let h=`<div class="aura" style="--c1:${a.c1};--c2:${a.c2}">`;
   let upI=0,dnI=0,stI=0,blI=0;
   const upPos=[18,38,58,78],dnPos=[15,35,55,75],stPos=[[10,20],[80,30],[45,8],[70,75]],blPos=[20,50,80];
@@ -635,39 +793,92 @@ function miniSVG(col,gid,hat){
 function gunOnlySVG(gid){return `<svg viewBox="-8 -12 62 40" width="118" height="72" style="overflow:visible">${gunSVG(gid)}</svg>`}
 
 function renderShop(){
-  const items=SHOP[curTab];
+  const items=SHOP[curTab].filter(it=>!it.devOnly||DEV_BACKUP);
   let h='<div class="shop-grid">';
   items.forEach(it=>{
     const owned=USER.owned[curTab].includes(it.id);
     const eq=USER.equipped[curTab]===it.id;
     let tag=eq?'<div class="stag stag-eq">장착</div>':(owned?'<div class="stag stag-own">보유</div>':'');
     let prev='';
-    if(curTab==='body')prev=auraHTML(USER.equipped.aura,1)+miniSVG(it.c,USER.equipped.gun,getHat());
-    else if(curTab==='aura')prev=auraHTML(it.id,1)+miniSVG(getCol(),USER.equipped.gun,getHat());
+    if(curTab==='body')prev=auraHTML(getAuraId(),1)+miniSVG(it.c,getGunId(),getHat());
+    else if(curTab==='aura')prev=auraHTML(it.id,1)+miniSVG(getCol(),getGunId(),getHat());
     else if(curTab==='gun')prev=`<div class="gunprev">${gunOnlySVG(it.id)}</div>`;
-    else prev=auraHTML(USER.equipped.aura,1)+miniSVG(getCol(),USER.equipped.gun,it.e);
+    else prev=auraHTML(getAuraId(),1)+miniSVG(getCol(),getGunId(),it.e);
     h+=`<div class="shop-item r-${it.r} ${eq?'eq':''} ${owned?'':'lock'}" onclick="buyEq('${curTab}','${it.id}')">
-${tag}<div class="rar r-${it.r}">${RN[it.r]}</div><div class="preview">${prev}</div>
-<div class="sname">${it.n}</div><div class="sprice">${owned?(eq?'✅ 장착중':'👆 장착'):'🪙 '+it.p.toLocaleString()}</div></div>`;
+${tag}<div class="rar r-${it.r}">${it.devOnly?'🔑 개발자 전용':RN[it.r]}</div><div class="preview">${prev}</div>
+<div class="sname">${it.n}</div><div class="sprice ${it.devOnly?'dev-item-label':''}">${it.devOnly?(eq?'✅ 장착중':'👆 전용 장착'):(owned?(eq?'✅ 장착중':'👆 장착'):'🪙 '+it.p.toLocaleString())}</div></div>`;
   });
   $('shopContent').innerHTML=h+'</div>';
 }
 function buyEq(cat,id){
-  const it=SHOP[cat].find(x=>x.id===id);if(!it)return;
+  const it=SHOP[cat]?.find(x=>x.id===id);if(!it||it.devOnly&&!DEV_BACKUP)return;
   if(USER.owned[cat].includes(id)){USER.equipped[cat]=id;saveUser();renderShop();sfx('ok');return}
   if(USER.coins<it.p){alert(`🪙 코인 부족!\n필요 ${it.p} / 보유 ${USER.coins}\n\n승리하면 +200코인 지급!`);return}
   if(confirm(`🛍️ [${RN[it.r]}] ${it.n}\n${it.p.toLocaleString()} 코인으로 구매하시겠습니까?\n\n잔액: ${(USER.coins-it.p).toLocaleString()}`)){
     USER.coins-=it.p;USER.owned[cat].push(id);USER.equipped[cat]=id;saveUser();updCoin();renderShop();sfx('coin')}
 }
-function getCol(){return SHOP.body.find(x=>x.id===USER.equipped.body)?.c||'#00f2fe'}
-function getGunId(){return USER.equipped.gun||'default'}
-function getHat(){return SHOP.hat.find(x=>x.id===USER.equipped.hat)?.e||''}
+function getEquipped(cat){
+  const item=SHOP[cat].find(it=>it.id===USER.equipped[cat]);
+  return item&&(!item.devOnly||DEV_BACKUP)?item:SHOP[cat][0];
+}
+function getCol(){return getEquipped('body').c}
+function getAuraId(){return getEquipped('aura').id}
+function getGunId(){return getEquipped('gun').id}
+function getHat(){return getEquipped('hat').e||''}
 
 let G={lang:'ko',typ:'word',dif:'normal',aiSpd:'normal',tLim:15,mode:'ai',
 p1:{hp:3,mx:3,w:0,n:'P1',sh:3,shOn:false},p2:{hp:3,mx:3,w:0,n:'P2',sh:3,shOn:false},
 word:'',rnd:1,on:false,tid:null,tLeft:15,aiTid:null,aiP:0,aiTypo:false,aiTypoChar:'',
 aimPhase:false,aimTid:null,aimAid:null,aimSh:null,aimLo:null,recent:[],
-tX:0,tY:0,tDx:3,tDy:2,fired:false,aimTime:3,party:null,role:null,_poll:null,inpOK:false,cdIv:null};
+tX:0,tY:0,tDx:3,tDy:2,fired:false,aimTime:3,party:null,role:null,_poll:null,inpOK:false,cdIv:null,devSkillsUsed:newDevSkillState()};
+
+function newDevSkillState(){return {time:false,heal:false,shield:false,focus:false}}
+function canUseDevSkill(){
+  return Boolean(DEV_BACKUP&&G.mode==='ai'&&$('scrGame').classList.contains('on')&&
+    !$('devPwOv').classList.contains('on')&&!$('revealPwOv').classList.contains('on')&&!$('rOv').classList.contains('on'));
+}
+function updateDevSkillUI(){
+  const active=canUseDevSkill();
+  const typing=active&&G.on&&!G.aimPhase;
+  const aiming=active&&G.aimPhase&&G.aimSh==='p1'&&!G.fired&&$('aimOv').classList.contains('on');
+  $('devSkills').style.display=active?'grid':'none';
+  $('devSkillFocus').style.display=aiming?'block':'none';
+  const buttons={time:'devSkillTime',heal:'devSkillHeal',shield:'devSkillShield',focus:'devSkillFocus'};
+  for(const [type,id] of Object.entries(buttons)){
+    const available=type==='focus'?aiming:typing&&
+      (type==='heal'?G.p1.hp<G.p1.mx:type==='shield'?G.p1.sh<3:true);
+    const b=$(id);
+    b.disabled=!available||G.devSkillsUsed[type];
+    b.title=G.devSkillsUsed[type]?'이번 경기에서 사용 완료':'경기당 1회';
+  }
+}
+function useDevSkill(type){
+  if(!Object.hasOwn(G.devSkillsUsed,type)||G.devSkillsUsed[type]||!canUseDevSkill())return;
+  const typing=G.on&&!G.aimPhase;
+  const aiming=G.aimPhase&&G.aimSh==='p1'&&!G.fired&&$('aimOv').classList.contains('on');
+  if(type==='focus'?!aiming:!typing)return;
+  if(type==='heal'&&G.p1.hp>=G.p1.mx||type==='shield'&&G.p1.sh>=3)return;
+  G.devSkillsUsed[type]=true;
+  if(type==='time'){
+    G.tLeft+=5;
+    $('tmt').textContent=G.tLeft.toFixed(1)+'초';
+    $('tmf').style.width=Math.min(100,G.tLeft/G.tLim*100)+'%';
+  }else if(type==='heal'){
+    G.p1.hp++;
+    rHP('p1');
+  }else if(type==='shield'){
+    G.p1.sh++;
+    updSh('p1');
+  }else{
+    G.aimTime+=2;
+    $('aimTmF').style.width=Math.min(100,G.aimTime/3*100)+'%';
+    $('aimRes').textContent='🎯 정밀 조준! +2초';
+  }
+  if(type!=='focus')$('wbox').innerHTML=`<span class="inf">${{time:'⚡ 시간 +5초',heal:'❤️ HP +1',shield:'🛡️ 쉴드 +1'}[type]}</span>`;
+  sfx('coin');
+  updateDevSkillUI();
+  if(type!=='focus')$('iS').focus(); // 모바일 버튼 사용 후 타이핑을 이어갈 수 있게 합니다.
+}
 
 function goScr(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));$(id).classList.add('on')}
 function pk(g,v){document.querySelectorAll('#'+g+' .op').forEach(b=>b.classList.toggle('on',b.dataset.v===v));if(g.includes('Lang'))G.lang=v;if(g.includes('Type'))G.typ=v;if(g.includes('Diff'))G.dif=v;updWCount()}
@@ -716,19 +927,39 @@ if(st==='shoot')return`<svg viewBox="0 0 140 155">${hs}<circle cx="70" cy="40" r
 if(st==='shield')return`<svg viewBox="0 0 140 155"><g><animateTransform attributeName="transform" type="translate" values="0,0;0,-2;0,0" dur="2s" repeatCount="indefinite"/>${hs}<circle cx="70" cy="40" r="17" fill="none" stroke="${col}" stroke-width="3.2" ${glow}/><circle cx="${e1}" cy="36" r="2.2" fill="${col}"/><circle cx="${e2}" cy="36" r="2.2" fill="${col}"/><line x1="70" y1="57" x2="70" y2="100" stroke="${col}" stroke-width="3.2" ${glow}/><line x1="70" y1="73" x2="${R?42:98}" y2="61" stroke="${col}" stroke-width="3.2" ${glow}/><text x="${R?24:86}" y="67" font-size="20">🛡️</text><line x1="70" y1="73" x2="${R?98:42}" y2="95" stroke="${col}" stroke-width="3.2" ${glow}/><line x1="70" y1="100" x2="52" y2="140" stroke="${col}" stroke-width="3.2" ${glow}/><line x1="70" y1="100" x2="88" y2="140" stroke="${col}" stroke-width="3.2" ${glow}/></g></svg>`;
 return`<svg viewBox="0 0 140 155"><g><animateTransform attributeName="transform" type="translate" values="0,0;0,-2.5;0,0" dur="2.2s" repeatCount="indefinite"/>${hs}<circle cx="70" cy="40" r="17" fill="none" stroke="${col}" stroke-width="3.2" ${glow}/><circle cx="${e1}" cy="36" r="2.2" fill="${col}"/><circle cx="${e2}" cy="36" r="2.2" fill="${col}"/><circle cx="${e1+1}" cy="35" r=".9" fill="#fff" opacity=".8"/><path d="M63 47Q70 52 77 47" fill="none" stroke="${col}" stroke-width="1.6"/><line x1="70" y1="57" x2="70" y2="100" stroke="${col}" stroke-width="3.2" ${glow}/><line x1="70" y1="73" x2="${R?101:39}" y2="73" stroke="${col}" stroke-width="3.2" ${glow}/>${gunPos}<line x1="70" y1="73" x2="${R?40:100}" y2="95" stroke="${col}" stroke-width="3.2" ${glow}/><line x1="70" y1="100" x2="52" y2="140" stroke="${col}" stroke-width="3.2" ${glow}/><line x1="70" y1="100" x2="88" y2="140" stroke="${col}" stroke-width="3.2" ${glow}/></g></svg>`}
 
-function dJ1(st){$('j1').innerHTML=auraHTML(USER.equipped.aura,0)+jSVG('R',getCol(),st,getGunId(),getHat())}
+function dJ1(st){$('j1').innerHTML=auraHTML(getAuraId(),0)+jSVG('R',getCol(),st,getGunId(),getHat())}
 function dJ2(st){$('j2').innerHTML=jSVG('L','#ff2a85',st,'default','')}
 function dJ(w,st){w==='p1'?dJ1(st):dJ2(st)}
 function rHP(w){const d=G[w],n=w==='p1'?'1':'2';$('hf'+n).style.width=(d.hp/d.mx*100)+'%';$('ht'+n).textContent=d.hp+'/'+d.mx;let h='';for(let i=0;i<d.mx;i++)h+=`<span class="ht ${i<d.hp?'ht-on':'ht-off'}">${i<d.hp?'❤️':'🖤'}</span>`;$('hr'+n).innerHTML=h;updSh(w)}
-function updSh(w){const d=G[w],n=w==='p1'?'1':'2';for(let i=0;i<3;i++)$('si'+n+'_'+i).classList.toggle('ud',i>=d.sh);const b=$('sb'+n);if(d.sh<=0){b.disabled=true;b.textContent='없음';b.classList.remove('on')}else if(d.shOn){b.classList.add('on');b.textContent='🛡️ON!'}else{b.classList.remove('on');b.textContent='🛡️('+d.sh+')E';b.disabled=!G.aimPhase}}
+function updSh(w){
+  const d=G[w],n=w==='p1'?'1':'2',b=$('sb'+n);
+  for(let i=0;i<3;i++)$('si'+n+'_'+i).classList.toggle('ud',i>=d.sh);
+  b.classList.toggle('on',d.shOn);
+  b.textContent=d.shOn?'🛡️ ON':d.sh>0?'🛡️ '+d.sh+'회':'🛡️ 없음';
+  b.disabled=!G.aimPhase||G.fired||G.aimLo!==w||d.sh<=0||d.shOn||(G.mode==='ai'&&w==='p2');
+}
+function useShield(w){
+  if(!G.aimPhase||G.fired||G.aimLo!==w||!G[w]||G[w].sh<=0||G[w].shOn||G.mode==='ai'&&w==='p2')return;
+  actSh(w);
+}
+function updateAimShieldUI(){
+  const defender=G.aimLo;
+  const available=G.mode!=='ai'&&G.aimPhase&&!G.fired&&defender&&G[defender].sh>0&&
+    !G[defender].shOn&&$('aimOv').classList.contains('on');
+  $('aimShieldBtn').style.display=available?'block':'none';
+}
+function useAimShield(){useShield(G.aimLo)}
 function actSh(w){const d=G[w];if(d.sh<=0||d.shOn)return;d.shOn=true;d.sh--;sfx('shield');dJ(w,'shield');
 const pan=$('pan'+(w==='p1'?'1':'2'));let o=pan.querySelector('.sb');if(o)o.remove();
-const b=document.createElement('div');b.className='sb';pan.appendChild(b);updSh(w);
+const b=document.createElement('div');b.className='sb';pan.appendChild(b);updSh(w);updateAimShieldUI();
 if(G.aimPhase){const ar=$('aimArea');let nt=ar.querySelector('.aim-sn');if(nt)nt.remove();nt=document.createElement('div');nt.className='aim-sn';nt.textContent='🛡️ '+G[w].n+' 쉴드 발동!';ar.appendChild(nt);setTimeout(()=>nt.remove(),1500);
 $('aimTgt').innerHTML=w==='p1'?jSVG('R',getCol(),'shield',getGunId(),getHat()):jSVG('L','#ff2a85','shield','default','')}}
 
 document.addEventListener('keydown',e=>{
-if(e.code==='KeyE'&&G.aimPhase){e.preventDefault();const d=G.aimLo;if(d&&G[d].sh>0&&!G[d].shOn)actSh(d)}
+if(['F2','F3','F4','F5'].includes(e.code)&&!e.repeat&&DEV_BACKUP&&G.mode==='ai'&&$('scrGame').classList.contains('on')){
+  e.preventDefault();useDevSkill({F2:'time',F3:'heal',F4:'shield',F5:'focus'}[e.code]);
+}
+if(e.code==='KeyE'&&G.aimPhase){e.preventDefault();useShield(G.aimLo)}
 if(e.code==='Space'&&G.aimPhase&&!G.fired){e.preventDefault();doFire()}});
 
 function getW(){
@@ -803,6 +1034,8 @@ function goAI(){
 }
 
 function initG(){
+  G.devSkillsUsed=newDevSkillState();
+  G.on=false;
   $('nm1').textContent=G.p1.n;
   $('nm2').textContent=G.p2.n;
   rHP('p1');rHP('p2');
@@ -874,6 +1107,7 @@ function startR(){
   dJ1('idle');dJ2('idle');
   $('sb1').disabled=true;$('sb2').disabled=true;
   startTm();
+  updateDevSkillUI();
   if(G.mode==='ai')startAI();
 }
 
@@ -893,7 +1127,7 @@ function startTm(){
       return;
     }
     const p=G.tLeft/G.tLim*100;
-    $('tmf').style.width=p+'%';
+    $('tmf').style.width=Math.min(100,p)+'%';
     $('tmf').style.background=p<20?'#f22':p<50?'linear-gradient(90deg,#f22,#fd0)':'linear-gradient(90deg,#f22,#fd0,#0f8)';
     $('tmt').textContent=G.tLeft.toFixed(1)+'초';
   },100);
@@ -901,8 +1135,10 @@ function startTm(){
 
 function tmUp(){
   G.on=false;
+  updateDevSkillUI();
   cleanAllTimers();
   $('iS').disabled=true;
+  $('iS').blur();
   $('wbox').innerHTML='<span class="inf">⏰ 시간 초과!</span>';
   setTimeout(()=>{
     if(!G.on && document.getElementById('scrGame').classList.contains('on')){
@@ -948,9 +1184,11 @@ function startAI(){
 
 function rWin(w){
   G.on=false;
+  updateDevSkillUI();
   clearInterval(G.tid);G.tid=null;
   clearTimeout(G.aiTid);G.aiTid=null;
   $('iS').disabled=true;
+  $('iS').blur();
   G.fired=false;
   G.aiTypo=false;G.aiTypoChar='';
   const l=w==='p1'?'p2':'p1';
@@ -958,9 +1196,9 @@ function rWin(w){
   $(l==='p1'?'st1':'st2').textContent='😰 위험!';$(l==='p1'?'st1':'st2').style.color='#f55';
   $('wbox').innerHTML=`<span class="inf">${esc(G[w].n)} 🎯 조준 모드!</span>`;
   G.aimPhase=true;G.aimSh=w;G.aimLo=l;
-  if(G[l].sh>0){$('sb'+(l==='p1'?'1':'2')).disabled=false;updSh(l)}
+  updSh(l);
   if(w==='p2'&&G.mode==='ai'){
-    if(G.p1.sh>0){$('sb1').disabled=false;updSh('p1')}
+    updSh('p1');
     $('wbox').innerHTML=`<span class="inf">🤖 AI 조준 중! <span class="key-badge">E</span>키로 쉴드!</span>`;
     setTimeout(()=>{
       if(!document.getElementById('scrGame').classList.contains('on'))return;
@@ -983,6 +1221,8 @@ function startAim(sh,tg){
   if(!document.getElementById('scrGame').classList.contains('on'))return;
   G.fired=false;G.aimTime=3;
   $('aimOv').classList.add('on');
+  updateDevSkillUI();
+  updateAimShieldUI();
   $('aimTitle').textContent=G[sh].n+' 🎯 조준!';$('aimTitle').style.color=sh==='p1'?'#00f2fe':'#ff2a85';
   $('aimSub').textContent=G[tg].n+'을(를) 맞춰라!';$('aimRes').textContent='';$('fireBtn').disabled=false;$('aimTmF').style.width='100%';
   const ar=$('aimArea'),aw=ar.offsetWidth,ah=ar.offsetHeight,t=$('aimTgt');
@@ -999,17 +1239,21 @@ function startAim(sh,tg){
     G.aimAid=requestAnimationFrame(mv);
   }
   t.style.left='0';t.style.top='0';G.aimAid=requestAnimationFrame(mv);
-  ar.onmousemove=e=>{const r=ar.getBoundingClientRect();cr.style.left=cl(e.clientX-r.left-23,-10,aw-36)+'px';cr.style.top=cl(e.clientY-r.top-23,-10,ah-36)+'px'};
+  const moveCross=(x,y)=>{const r=ar.getBoundingClientRect();cr.style.left=cl(x-r.left-23,-10,aw-36)+'px';cr.style.top=cl(y-r.top-23,-10,ah-36)+'px'};
+  ar.onmousemove=e=>moveCross(e.clientX,e.clientY);
+  // 터치 조준은 발사와 분리합니다. 터치의 합성 클릭이 즉시 발사하지 않도록 막습니다.
+  ar.ontouchstart=ar.ontouchmove=e=>{e.preventDefault();moveCross(e.touches[0].clientX,e.touches[0].clientY)};
   ar.onclick=()=>{if(!G.fired)doFire()};
   clearInterval(G.aimTid);
   G.aimTid=setInterval(()=>{
-    G.aimTime-=.05;$('aimTmF').style.width=Math.max(0,G.aimTime/3*100)+'%';
+    G.aimTime-=.05;$('aimTmF').style.width=cl(G.aimTime/3*100,0,100)+'%';
     if(G.aimTime<=0){clearInterval(G.aimTid);G.aimTid=null;if(!G.fired)aimTO()}
   },50);
 }
 
 function aimTO(){
   if(G.fired)return;G.fired=true;
+  updateDevSkillUI();updateAimShieldUI();
   if(G.aimAid)cancelAnimationFrame(G.aimAid);G.aimAid=null;
   clearInterval(G.aimTid);G.aimTid=null;
   $('fireBtn').disabled=true;$('aimRes').textContent='⏰ 시간초과 MISS!';$('aimRes').style.color='#fd0';sfx('miss');
@@ -1020,6 +1264,7 @@ function aimTO(){
 
 function doFire(){
   if(G.fired||!G.aimPhase)return;G.fired=true;
+  updateDevSkillUI();updateAimShieldUI();
   clearInterval(G.aimTid);G.aimTid=null;
   if(G.aimAid)cancelAnimationFrame(G.aimAid);G.aimAid=null;
   $('fireBtn').disabled=true;sfx('shoot');
@@ -1092,7 +1337,7 @@ function showRes(w){
 function rematch(){
   cleanAllTimers();
   $('rOv').classList.remove('on');
-  G.p1.hp=3;G.p2.hp=3;G.p1.sh=3;G.p2.sh=3;G.p1.shOn=false;G.p2.shOn=false;G.rnd=1;
+  G.p1.hp=3;G.p2.hp=3;G.p1.sh=3;G.p2.sh=3;G.p1.shOn=false;G.p2.shOn=false;G.rnd=1;G.devSkillsUsed=newDevSkillState();
   rHP('p1');rHP('p2');dJ1('idle');dJ2('idle');
   $('j1').classList.remove('wjmp');$('j2').classList.remove('wjmp');
   clr();cdA(()=>startR());
@@ -1123,6 +1368,7 @@ function exitGame(){
   if(G.party){const ps=getPS();if(ps[G.party])delete ps[G.party];savePS(ps);G.party=null}
   if(G._poll){clearInterval(G._poll);G._poll=null;}
   goScr('scrMenu');
+  updateDevSkillUI();
 }
 
 loadUser();
