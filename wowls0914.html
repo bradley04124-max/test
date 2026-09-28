@@ -230,6 +230,9 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 .dpw-cancel{color:#8a8a9c;border-color:#2a2a3a}
 .dpw-cancel:hover{color:#fff;border-color:#888}
 .dpw-box.shk{animation:sshka .32s}
+.dev-skill{display:none;margin:8px auto 0;padding:9px 13px;border:2px solid #fd0;border-radius:9px;background:rgba(255,221,0,.12);color:#fd0;font-weight:800;cursor:pointer;box-shadow:0 0 12px rgba(255,221,0,.2)}
+.dev-skill:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+.dev-item-label{color:#fd0;font-weight:800}
 .rov.on{display:flex}
 .rtit{font-size:36px;font-weight:900;animation:rga 1.1s infinite;letter-spacing:3px}
 @keyframes rga{0%,100%{text-shadow:0 0 14px currentColor}50%{text-shadow:0 0 38px currentColor,0 0 72px currentColor}}
@@ -336,6 +339,7 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 <div style="width:100%"><input class="gi" id="iS" placeholder="여기에 타이핑!" autocomplete="off" disabled></div>
 <div class="ai-disp" id="aiDisp" style="display:none"><span style="color:#666;font-size:10px">🤖 AI: </span><span id="aiTS"></span><span class="ac"></span><span id="aiRS"></span></div>
 <div class="htxt">먼저 완성→조준→발사! <span class="key-badge">E</span>=쉴드</div>
+<button type="button" class="dev-skill" id="devSkillBtn" onclick="useDevSkill()">⚡ 개발자 오버클럭 (F2) · +5초 / 경기당 1회</button>
 </div>
 <div class="ppan" id="pan2">
 <div class="pn c2" id="nm2">P2</div>
@@ -392,6 +396,7 @@ body{background:#05050c;color:#fff;font-family:'Segoe UI','맑은 고딕',sans-s
 <script>
 function $(id){return document.getElementById(id)}
 const SAVE='jolla_legend_v4';
+const DEV_AURA_ID='devmatrix';
 // 정적 HTML에서는 서버 인증이 불가능합니다. 해시와 암호화 데이터는 평문 노출만 줄입니다.
 const DEV_PW_HASH='1798d2b3b11512223bfa39589ceda38968e28d5ea317cf82e75d7102e9d7c9a9';
 // 보기 코드를 키로 사용하므로 올바른 코드를 입력해야 비밀번호를 복호화할 수 있습니다.
@@ -424,6 +429,9 @@ function loadUser(){
       if(d.equipped)['body','aura','gun','hat'].forEach(k=>{if(typeof d.equipped[k]==='string')USER.equipped[k]=d.equipped[k]});
     }else USER=defUser();
   }catch(e){USER=defUser()}
+  // 개발자 전용 장비는 새로고침/저장 데이터에서 권한 없이 복원되지 않도록 합니다.
+  USER.owned.aura=USER.owned.aura.filter(id=>id!==DEV_AURA_ID);
+  if(USER.equipped.aura===DEV_AURA_ID)USER.equipped.aura='none';
   saveUser();
 }
 function saveUser(){try{localStorage.setItem(SAVE,JSON.stringify(USER))}catch(e){}}
@@ -530,9 +538,11 @@ async function submitDevPw(){
     saveUser();
     updCoin();
     if($('scrShop').classList.contains('on')) renderShop();
+    if($('scrGame').classList.contains('on'))dJ1('idle');
+    updateDevSkillUI();
     $('devExitBtn').style.display='inline-block';
     sfx('coin');
-    alert('⚡ [개발자 모드 승인 완료!]\n모든 아이템 잠금 해제 & 코인 999,999개가 지급되었습니다!');
+    alert('⚡ [개발자 모드 승인 완료!]\n모든 아이템 잠금 해제 & 코인 999,999개 지급!\n상점의 개발자 매트릭스와 AI 대전 오버클럭(F2)을 사용할 수 있습니다.');
   } else {
     sfx('typo');
     const box=$('devPwBox');
@@ -566,6 +576,8 @@ function devExit(){
     saveUser();
     updCoin();
     if($('scrShop').classList.contains('on')) renderShop();
+    if($('scrGame').classList.contains('on'))dJ1('idle');
+    updateDevSkillUI();
     $('devExitBtn').style.display='none';
     sfx('typo');
     alert('✅ 개발자 모드 종료!\n개발자 모드 진입 전 상태로 원상복구되었습니다.');
@@ -639,7 +651,8 @@ aura:[
   {id:'galaxy',n:'🌌 갤럭시',p:1400,r:'l',c1:'#b6f',c2:'#5cf',fx:['ring3','orb','orbrev','star','star','star','base']},
   {id:'dragon',n:'🐉 드래곤',p:1800,r:'l',c1:'#f50',c2:'#fa0',fx:['wing','base','up','up','ring']},
   {id:'prism',n:'🌈 프리즘',p:2200,r:'m',c1:'#f0f',c2:'#0ff',fx:['prism','orb','star','star','base']},
-  {id:'divine',n:'👑 디바인',p:3000,r:'m',c1:'#fe4',c2:'#fff',fx:['rays','ring','orb','up','up','star','star','base']}
+  {id:'divine',n:'👑 디바인',p:3000,r:'m',c1:'#fe4',c2:'#fff',fx:['rays','ring','orb','up','up','star','star','base']},
+  {id:'devmatrix',n:'🛠️ 개발자 매트릭스',p:0,r:'m',devOnly:true,c1:'#0ff',c2:'#fd0',fx:['prism','rays','ring','bolt','bolt','star','base']}
 ],
 gun:[
   {id:'default',n:'스탠다드 P9',p:0,r:'c'},
@@ -671,7 +684,7 @@ const RN={c:'일반',r:'레어',e:'에픽',l:'전설',m:'신화'};
 
 function auraHTML(id,mini){
   const a=SHOP.aura.find(x=>x.id===id);
-  if(!a||!a.fx.length)return '';
+  if(!a||a.devOnly&&!DEV_BACKUP||!a.fx.length)return '';
   let h=`<div class="aura" style="--c1:${a.c1};--c2:${a.c2}">`;
   let upI=0,dnI=0,stI=0,blI=0;
   const upPos=[18,38,58,78],dnPos=[15,35,55,75],stPos=[[10,20],[80,30],[45,8],[70,75]],blPos=[20,50,80];
@@ -713,31 +726,32 @@ function miniSVG(col,gid,hat){
 function gunOnlySVG(gid){return `<svg viewBox="-8 -12 62 40" width="118" height="72" style="overflow:visible">${gunSVG(gid)}</svg>`}
 
 function renderShop(){
-  const items=SHOP[curTab];
+  const items=SHOP[curTab].filter(it=>!it.devOnly||DEV_BACKUP);
   let h='<div class="shop-grid">';
   items.forEach(it=>{
     const owned=USER.owned[curTab].includes(it.id);
     const eq=USER.equipped[curTab]===it.id;
     let tag=eq?'<div class="stag stag-eq">장착</div>':(owned?'<div class="stag stag-own">보유</div>':'');
     let prev='';
-    if(curTab==='body')prev=auraHTML(USER.equipped.aura,1)+miniSVG(it.c,USER.equipped.gun,getHat());
+    if(curTab==='body')prev=auraHTML(getAuraId(),1)+miniSVG(it.c,USER.equipped.gun,getHat());
     else if(curTab==='aura')prev=auraHTML(it.id,1)+miniSVG(getCol(),USER.equipped.gun,getHat());
     else if(curTab==='gun')prev=`<div class="gunprev">${gunOnlySVG(it.id)}</div>`;
-    else prev=auraHTML(USER.equipped.aura,1)+miniSVG(getCol(),USER.equipped.gun,it.e);
+    else prev=auraHTML(getAuraId(),1)+miniSVG(getCol(),USER.equipped.gun,it.e);
     h+=`<div class="shop-item r-${it.r} ${eq?'eq':''} ${owned?'':'lock'}" onclick="buyEq('${curTab}','${it.id}')">
-${tag}<div class="rar r-${it.r}">${RN[it.r]}</div><div class="preview">${prev}</div>
-<div class="sname">${it.n}</div><div class="sprice">${owned?(eq?'✅ 장착중':'👆 장착'):'🪙 '+it.p.toLocaleString()}</div></div>`;
+${tag}<div class="rar r-${it.r}">${it.devOnly?'🔑 개발자 전용':RN[it.r]}</div><div class="preview">${prev}</div>
+<div class="sname">${it.n}</div><div class="sprice ${it.devOnly?'dev-item-label':''}">${it.devOnly?(eq?'✅ 장착중':'👆 전용 장착'):(owned?(eq?'✅ 장착중':'👆 장착'):'🪙 '+it.p.toLocaleString())}</div></div>`;
   });
   $('shopContent').innerHTML=h+'</div>';
 }
 function buyEq(cat,id){
-  const it=SHOP[cat].find(x=>x.id===id);if(!it)return;
+  const it=SHOP[cat]?.find(x=>x.id===id);if(!it||it.devOnly&&!DEV_BACKUP)return;
   if(USER.owned[cat].includes(id)){USER.equipped[cat]=id;saveUser();renderShop();sfx('ok');return}
   if(USER.coins<it.p){alert(`🪙 코인 부족!\n필요 ${it.p} / 보유 ${USER.coins}\n\n승리하면 +200코인 지급!`);return}
   if(confirm(`🛍️ [${RN[it.r]}] ${it.n}\n${it.p.toLocaleString()} 코인으로 구매하시겠습니까?\n\n잔액: ${(USER.coins-it.p).toLocaleString()}`)){
     USER.coins-=it.p;USER.owned[cat].push(id);USER.equipped[cat]=id;saveUser();updCoin();renderShop();sfx('coin')}
 }
 function getCol(){return SHOP.body.find(x=>x.id===USER.equipped.body)?.c||'#00f2fe'}
+function getAuraId(){return USER.equipped.aura===DEV_AURA_ID&&!DEV_BACKUP?'none':USER.equipped.aura}
 function getGunId(){return USER.equipped.gun||'default'}
 function getHat(){return SHOP.hat.find(x=>x.id===USER.equipped.hat)?.e||''}
 
@@ -745,7 +759,25 @@ let G={lang:'ko',typ:'word',dif:'normal',aiSpd:'normal',tLim:15,mode:'ai',
 p1:{hp:3,mx:3,w:0,n:'P1',sh:3,shOn:false},p2:{hp:3,mx:3,w:0,n:'P2',sh:3,shOn:false},
 word:'',rnd:1,on:false,tid:null,tLeft:15,aiTid:null,aiP:0,aiTypo:false,aiTypoChar:'',
 aimPhase:false,aimTid:null,aimAid:null,aimSh:null,aimLo:null,recent:[],
-tX:0,tY:0,tDx:3,tDy:2,fired:false,aimTime:3,party:null,role:null,_poll:null,inpOK:false,cdIv:null};
+tX:0,tY:0,tDx:3,tDy:2,fired:false,aimTime:3,party:null,role:null,_poll:null,inpOK:false,cdIv:null,devSkillUsed:false};
+
+// 개발자 오버클럭: AI 대전에서 경기당 한 번, 현재 타이핑 시간 +5초.
+function updateDevSkillUI(){
+  const b=$('devSkillBtn');
+  b.style.display=DEV_BACKUP&&G.mode==='ai'&&$('scrGame').classList.contains('on')?'block':'none';
+  b.disabled=!DEV_BACKUP||G.mode!=='ai'||!G.on||G.devSkillUsed;
+  b.textContent=G.devSkillUsed?'⚡ 오버클럭 사용 완료':'⚡ 개발자 오버클럭 (F2) · +5초 / 경기당 1회';
+}
+function useDevSkill(){
+  if(!DEV_BACKUP||G.mode!=='ai'||!G.on||G.devSkillUsed||!$('scrGame').classList.contains('on')||$('devPwOv').classList.contains('on'))return;
+  G.devSkillUsed=true;
+  G.tLeft+=5;
+  $('tmt').textContent=G.tLeft.toFixed(1)+'초';
+  $('tmf').style.width=Math.min(100,G.tLeft/G.tLim*100)+'%';
+  $('wbox').innerHTML='<span class="inf">⚡ 개발자 오버클럭! 시간 +5초</span>';
+  sfx('coin');
+  updateDevSkillUI();
+}
 
 function goScr(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));$(id).classList.add('on')}
 function pk(g,v){document.querySelectorAll('#'+g+' .op').forEach(b=>b.classList.toggle('on',b.dataset.v===v));if(g.includes('Lang'))G.lang=v;if(g.includes('Type'))G.typ=v;if(g.includes('Diff'))G.dif=v;updWCount()}
@@ -794,7 +826,7 @@ if(st==='shoot')return`<svg viewBox="0 0 140 155">${hs}<circle cx="70" cy="40" r
 if(st==='shield')return`<svg viewBox="0 0 140 155"><g><animateTransform attributeName="transform" type="translate" values="0,0;0,-2;0,0" dur="2s" repeatCount="indefinite"/>${hs}<circle cx="70" cy="40" r="17" fill="none" stroke="${col}" stroke-width="3.2" ${glow}/><circle cx="${e1}" cy="36" r="2.2" fill="${col}"/><circle cx="${e2}" cy="36" r="2.2" fill="${col}"/><line x1="70" y1="57" x2="70" y2="100" stroke="${col}" stroke-width="3.2" ${glow}/><line x1="70" y1="73" x2="${R?42:98}" y2="61" stroke="${col}" stroke-width="3.2" ${glow}/><text x="${R?24:86}" y="67" font-size="20">🛡️</text><line x1="70" y1="73" x2="${R?98:42}" y2="95" stroke="${col}" stroke-width="3.2" ${glow}/><line x1="70" y1="100" x2="52" y2="140" stroke="${col}" stroke-width="3.2" ${glow}/><line x1="70" y1="100" x2="88" y2="140" stroke="${col}" stroke-width="3.2" ${glow}/></g></svg>`;
 return`<svg viewBox="0 0 140 155"><g><animateTransform attributeName="transform" type="translate" values="0,0;0,-2.5;0,0" dur="2.2s" repeatCount="indefinite"/>${hs}<circle cx="70" cy="40" r="17" fill="none" stroke="${col}" stroke-width="3.2" ${glow}/><circle cx="${e1}" cy="36" r="2.2" fill="${col}"/><circle cx="${e2}" cy="36" r="2.2" fill="${col}"/><circle cx="${e1+1}" cy="35" r=".9" fill="#fff" opacity=".8"/><path d="M63 47Q70 52 77 47" fill="none" stroke="${col}" stroke-width="1.6"/><line x1="70" y1="57" x2="70" y2="100" stroke="${col}" stroke-width="3.2" ${glow}/><line x1="70" y1="73" x2="${R?101:39}" y2="73" stroke="${col}" stroke-width="3.2" ${glow}/>${gunPos}<line x1="70" y1="73" x2="${R?40:100}" y2="95" stroke="${col}" stroke-width="3.2" ${glow}/><line x1="70" y1="100" x2="52" y2="140" stroke="${col}" stroke-width="3.2" ${glow}/><line x1="70" y1="100" x2="88" y2="140" stroke="${col}" stroke-width="3.2" ${glow}/></g></svg>`}
 
-function dJ1(st){$('j1').innerHTML=auraHTML(USER.equipped.aura,0)+jSVG('R',getCol(),st,getGunId(),getHat())}
+function dJ1(st){$('j1').innerHTML=auraHTML(getAuraId(),0)+jSVG('R',getCol(),st,getGunId(),getHat())}
 function dJ2(st){$('j2').innerHTML=jSVG('L','#ff2a85',st,'default','')}
 function dJ(w,st){w==='p1'?dJ1(st):dJ2(st)}
 function rHP(w){const d=G[w],n=w==='p1'?'1':'2';$('hf'+n).style.width=(d.hp/d.mx*100)+'%';$('ht'+n).textContent=d.hp+'/'+d.mx;let h='';for(let i=0;i<d.mx;i++)h+=`<span class="ht ${i<d.hp?'ht-on':'ht-off'}">${i<d.hp?'❤️':'🖤'}</span>`;$('hr'+n).innerHTML=h;updSh(w)}
@@ -806,6 +838,7 @@ if(G.aimPhase){const ar=$('aimArea');let nt=ar.querySelector('.aim-sn');if(nt)nt
 $('aimTgt').innerHTML=w==='p1'?jSVG('R',getCol(),'shield',getGunId(),getHat()):jSVG('L','#ff2a85','shield','default','')}}
 
 document.addEventListener('keydown',e=>{
+if(e.code==='F2'&&!e.repeat&&DEV_BACKUP&&G.mode==='ai'&&$('scrGame').classList.contains('on')){e.preventDefault();useDevSkill()}
 if(e.code==='KeyE'&&G.aimPhase){e.preventDefault();const d=G.aimLo;if(d&&G[d].sh>0&&!G[d].shOn)actSh(d)}
 if(e.code==='Space'&&G.aimPhase&&!G.fired){e.preventDefault();doFire()}});
 
@@ -881,6 +914,8 @@ function goAI(){
 }
 
 function initG(){
+  G.devSkillUsed=false;
+  G.on=false;
   $('nm1').textContent=G.p1.n;
   $('nm2').textContent=G.p2.n;
   rHP('p1');rHP('p2');
@@ -952,6 +987,7 @@ function startR(){
   dJ1('idle');dJ2('idle');
   $('sb1').disabled=true;$('sb2').disabled=true;
   startTm();
+  updateDevSkillUI();
   if(G.mode==='ai')startAI();
 }
 
@@ -971,7 +1007,7 @@ function startTm(){
       return;
     }
     const p=G.tLeft/G.tLim*100;
-    $('tmf').style.width=p+'%';
+    $('tmf').style.width=Math.min(100,p)+'%';
     $('tmf').style.background=p<20?'#f22':p<50?'linear-gradient(90deg,#f22,#fd0)':'linear-gradient(90deg,#f22,#fd0,#0f8)';
     $('tmt').textContent=G.tLeft.toFixed(1)+'초';
   },100);
@@ -979,6 +1015,7 @@ function startTm(){
 
 function tmUp(){
   G.on=false;
+  updateDevSkillUI();
   cleanAllTimers();
   $('iS').disabled=true;
   $('wbox').innerHTML='<span class="inf">⏰ 시간 초과!</span>';
@@ -1026,6 +1063,7 @@ function startAI(){
 
 function rWin(w){
   G.on=false;
+  updateDevSkillUI();
   clearInterval(G.tid);G.tid=null;
   clearTimeout(G.aiTid);G.aiTid=null;
   $('iS').disabled=true;
@@ -1170,7 +1208,7 @@ function showRes(w){
 function rematch(){
   cleanAllTimers();
   $('rOv').classList.remove('on');
-  G.p1.hp=3;G.p2.hp=3;G.p1.sh=3;G.p2.sh=3;G.p1.shOn=false;G.p2.shOn=false;G.rnd=1;
+  G.p1.hp=3;G.p2.hp=3;G.p1.sh=3;G.p2.sh=3;G.p1.shOn=false;G.p2.shOn=false;G.rnd=1;G.devSkillUsed=false;
   rHP('p1');rHP('p2');dJ1('idle');dJ2('idle');
   $('j1').classList.remove('wjmp');$('j2').classList.remove('wjmp');
   clr();cdA(()=>startR());
@@ -1201,6 +1239,7 @@ function exitGame(){
   if(G.party){const ps=getPS();if(ps[G.party])delete ps[G.party];savePS(ps);G.party=null}
   if(G._poll){clearInterval(G._poll);G._poll=null;}
   goScr('scrMenu');
+  updateDevSkillUI();
 }
 
 loadUser();
